@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>이색기차여행 - 목록</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="mb-4">이색기차여행 목록</h1>
+
+    <div class="filters mb-4">
+        <!-- 국가 선택 -->
+        <div class="country-selector mb-3">
+            <h5>국가 선택</h5>
+            <div class="btn-group" role="group">
+                <button th:each="country : ${countries}"
+                        th:id="${'country-' + country.id}"
+                        th:class="${country.id == selectedCountryId ? 'btn btn-primary' : 'btn btn-outline-primary'}"
+                        th:data-country-id="${country.id}"
+                        th:text="${country.name}"
+                        onclick="selectCountry(this.getAttribute('data-country-id'))">
+                    국가명
+                </button>
+            </div>
+        </div>
+
+        <!-- 지역 선택 -->
+        <div class="region-selector mb-3">
+            <h5>지역 선택</h5>
+            <div class="btn-group flex-wrap" role="group" id="region-buttons">
+                <button class="btn btn-primary" data-region-id="all">전체</button>
+                <button th:each="region : ${regions}"
+                        th:class="'btn btn-outline-primary'"
+                        th:data-region-id="${region.id}"
+                        th:text="${region.name}"
+                        onclick="selectRegion(this.getAttribute('data-region-id'))">
+                    지역명
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 기차여행 목록 -->
+    <div class="train-travels-container">
+        <div class="row" id="train-travels">
+            <div class="col-md-4 mb-4" th:each="train : ${trainTravels}">
+                <div class="card h-100">
+                    <img th:src="${train.thumbnail}" class="card-img-top" alt="기차여행 이미지" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${train.name}">기차여행 이름</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <span th:text="${train.regionName}">지역명</span>,
+                                <span th:text="${train.countryName}">국가명</span>
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-danger">♥</span>
+                                <span th:text="${train.likeCount}">0</span>
+                            </div>
+                            <a th:href="@{/trainDetail/{id}(id=${train.id})}" class="btn btn-sm btn-outline-primary">자세히 보기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let selectedCountryId = [[${selectedCountryId}]];
+    let selectedRegionId = 'all';
+
+    function selectCountry(countryId) {
+        selectedCountryId = countryId;
+        selectedRegionId = 'all';
+
+        // 국가 버튼 스타일 변경
+        document.querySelectorAll('.country-selector .btn').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+        });
+        document.querySelector(`[data-country-id="${countryId}"]`).classList.remove('btn-outline-primary');
+        document.querySelector(`[data-country-id="${countryId}"]`).classList.add('btn-primary');
+
+        // 지역 버튼 로딩
+        fetch(`/api/regions?countryId=${countryId}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('region-buttons');
+                container.innerHTML = '<button class="btn btn-primary" data-region-id="all">전체</button>';
+
+                data.forEach(region => {
+                    container.innerHTML += `
+                    <button class="btn btn-outline-primary" data-region-id="${region.id}" onclick="selectRegion('${region.id}')">${region.name}</button>
+                    `;
+                });
+            });
+
+        // 기차여행 목록 로딩
+        loadTrainTravels();
+    }
+
+    function selectRegion(regionId) {
+        selectedRegionId = regionId;
+
+        // 지역 버튼 스타일 변경
+        document.querySelectorAll('.region-selector .btn').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+        });
+        document.querySelector(`[data-region-id="${regionId}"]`).classList.remove('btn-outline-primary');
+        document.querySelector(`[data-region-id="${regionId}"]`).classList.add('btn-primary');
+
+        // 기차여행 목록 로딩
+        loadTrainTravels();
+    }
+
+    function loadTrainTravels() {
+        let url = `/api/trainTravels?countryId=${selectedCountryId}`;
+        if (selectedRegionId !== 'all') {
+            url += `&regionId=${selectedRegionId}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('train-travels');
+                container.innerHTML = '';
+
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="col-12"><p class="text-center">해당 지역에 등록된 기차여행이 없습니다.</p></div>';
+                    return;
+                }
+
+                data.forEach(train => {
+                    container.innerHTML += `
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <img src="${train.thumbnail}" class="card-img-top" alt="기차여행 이미지" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">${train.name}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        ${train.regionName}, ${train.countryName}
+                                    </small>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-danger">♥</span>
+                                        <span>${train.likeCount}</span>
+                                    </div>
+                                    <a href="/trainDetail/${train.id}" class="btn btn-sm btn-outline-primary">자세히 보기</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+            });
+    }
+</script>
+</body>
+</html>

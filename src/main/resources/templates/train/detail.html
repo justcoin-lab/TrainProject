@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${train.name} + ' - 이색 기차여행'">기차 이름 - 이색 기차여행</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- 헤더는 메인 페이지와 동일하므로 생략 (Thymeleaf fragment로 분리하는 것이 좋음) -->
+
+<!-- 기차여행 상세 정보 -->
+<div class="container py-5">
+    <div class="row">
+        <!-- 기차 이미지 -->
+        <div class="col-md-6 mb-4">
+            <img th:src="${train.imageUrl}" class="img-fluid rounded" alt="기차 이미지">
+        </div>
+
+        <!-- 기차 정보 -->
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 th:text="${train.name}">기차 이름</h1>
+
+                <!-- 북마크 버튼 (로그인 상태에서만 표시) -->
+                <button sec:authorize="isAuthenticated()"
+                        th:class="${train.bookmarked} ? 'btn btn-danger' : 'btn btn-outline-danger'"
+                        onclick="toggleBookmark()"
+                        id="bookmarkBtn">
+                    <i class="bi bi-bookmark-heart-fill"></i>
+                    <span th:text="${train.bookmarked} ? '북마크 해제' : '북마크'">북마크</span>
+                </button>
+            </div>
+
+            <!-- 지역 정보 -->
+            <div class="badge bg-info mb-3" th:text="${train.regionName}">지역 이름</div>
+
+            <!-- 기차 설명 -->
+            <p class="mb-4" th:text="${train.description}">기차 설명</p>
+
+            <!-- 운행 정보 -->
+            <div class="card mb-3">
+                <div class="card-header">운행 정보</div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4 fw-bold">운행일</div>
+                        <div class="col-8" th:text="${train.operatingDays}">운행일</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 fw-bold">요금</div>
+                        <div class="col-8" th:text="${train.fare}">요금</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예약 버튼 -->
+            <a th:href="${train.bookingUrl}" target="_blank" class="btn btn-primary btn-lg w-100">
+                예약하기
+            </a>
+        </div>
+    </div>
+
+    <!-- 노선 정보 -->
+    <div class="mt-5">
+        <h3>노선 정보</h3>
+        <div class="text-center my-4">
+            <img th:src="${train.routeImageUrl}" class="img-fluid rounded" alt="노선 이미지">
+        </div>
+    </div>
+</div>
+
+<!-- 푸터는 메인 페이지와 동일하므로 생략 -->
+
+<!-- 스크립트 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 북마크 토글 함수
+    function toggleBookmark() {
+        const trainId = [[${train.id}]];
+
+        fetch(`/api/bookmarks/toggle?trainId=${trainId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const btn = document.getElementById('bookmarkBtn');
+                if (btn.classList.contains('btn-outline-danger')) {
+                    btn.classList.remove('btn-outline-danger');
+                    btn.classList.add('btn-danger');
+                    btn.querySelector('span').textContent = '북마크 해제';
+                } else {
+                    btn.classList.remove('btn-danger');
+                    btn.classList.add('btn-outline-danger');
+                    btn.querySelector('span').textContent = '북마크';
+                }
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다. 다시 시도해주세요.');
+        });
+    }
+</script>
+</body>
+</html>

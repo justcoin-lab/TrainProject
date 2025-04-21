@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${post.title} + ' - 커뮤니티'">게시글 제목 - 커뮤니티</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="post-detail">
+        <!-- 게시글 헤더 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 th:text="${post.title}">게시글 제목</h2>
+                    <div sec:authorize="isAuthenticated()" th:if="${post.author == username}">
+                        <a th:href="@{/posts/{id}/edit(id=${post.id})}" class="btn btn-sm btn-outline-secondary me-2">수정</a>
+                        <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display: inline-block;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="post-info mb-3">
+                    <small class="text-muted">
+                        <span th:text="${post.author}">작성자</span> |
+                        <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2025-04-18 14:30</span> |
+                        <span>조회 <span th:text="${post.viewCount}">10</span>회</span>
+                    </small>
+                </div>
+                <div class="post-content" th:utext="${post.content}">
+                    게시글 내용
+                </div>
+            </div>
+        </div>
+
+        <!-- 댓글 목록 -->
+        <div class="comments mb-4">
+            <h4 class="mb-3">댓글 <span th:text="${#lists.size(comments)}">0</span>개</h4>
+
+            <div class="comment-list">
+                <div class="card mb-2" th:each="comment : ${comments}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="card-subtitle mb-2 text-muted" th:text="${comment.author}">댓글 작성자</h6>
+                            <small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2025-04-18 15:00</small>
+                        </div>
+                        <p class="card-text" th:text="${comment.content}">댓글 내용</p>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(comments)}" class="text-center py-3">
+                    <p>등록된 댓글이 없습니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 댓글 작성 폼 -->
+        <div class="comment-form mb-4" sec:authorize="isAuthenticated()">
+            <h4 class="mb-3">댓글 작성</h4>
+            <form th:action="@{/posts/{id}/comment(id=${post.id})}" method="post">
+                <div class="mb-3">
+                    <textarea class="form-control" name="content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">댓글 등록</button>
+            </form>
+        </div>
+
+        <div class="text-center mb-4" sec:authorize="isAnonymous()">
+            <a href="/login" class="btn btn-outline-primary">로그인하여 댓글 작성하기</a>
+        </div>
+
+        <div class="text-center">
+            <a href="/community" class="btn btn-secondary">목록으로 돌아가기</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

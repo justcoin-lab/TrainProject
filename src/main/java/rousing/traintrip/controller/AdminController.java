@@ -74,7 +74,7 @@ public class AdminController {
         return "redirect:/admin/trains";
     }
 
-    @DeleteMapping("/trains/{id}")
+    @PostMapping("/trains/delete/{id}")
     public String deleteTrain(@PathVariable Long id) {
         trainService.deleteTrain(id);
         return "redirect:/admin/trains";

@@ -15,7 +15,7 @@ public class Region extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 지역 이름
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
@@ -24,6 +24,7 @@ public class Region extends BaseEntity {
     @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<Train> trains = new ArrayList<>();
 
+    @Builder
     public Region(String name, Country country) {
         this.name = name;
         this.country = country;

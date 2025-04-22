@@ -15,13 +15,13 @@ public class Country extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 국가 이름
 
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
     private List<Region> regions = new ArrayList<>();
 
+    @Builder
     public Country(String name) {
-
         this.name = name;
     }
 }

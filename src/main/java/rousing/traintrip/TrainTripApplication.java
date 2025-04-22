@@ -35,12 +35,13 @@ public class TrainTripApplication {
 		return args -> {
 			// 관리자 계정 생성
 			if (!userRepository.existsByUsername("admin")) {
-				User admin = new User(
-						"admin",
-						passwordEncoder.encode("admin"),
-						"admin@traintrips.com",
-						User.Role.ADMIN
-				);
+				User admin = User.builder()
+				.username("admin")
+				.password(passwordEncoder.encode("admin"))
+				.email("admin@traintrips.com")
+				.nickname("관리자")
+				        .role(User.Role.ADMIN)
+                        .build();
 				userRepository.save(admin);
 			}
 

@@ -52,12 +52,13 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        User user = new User(
-                dto.getUsername(),
-                passwordEncoder.encode(dto.getPassword()),
-                dto.getEmail(),
-                User.Role.USER
-        );
+        User user = User.builder()
+                .username(dto.getUsername())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .email(dto.getEmail())
+                .nickname(dto.getUsername())
+                .role(User.Role.USER)
+                .build();
 
         userRepository.save(user);
     }

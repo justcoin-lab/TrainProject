@@ -15,25 +15,25 @@ public class Train extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 기차여행 이름
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+    private String description; // 기차 여행 설명
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String imageUrl; // 이미지 URL
 
     @Column(nullable = false)
-    private String operatingDays;
+    private String operatingDays; // 운행일 정보
+    
+    @Column(nullable = false)
+    private String fare; // 요금 정보
 
     @Column(nullable = false)
-    private String fare;
+    private String routeImageUrl; // 노선도 이미지 URL
 
     @Column(nullable = false)
-    private String routeImageUrl;
-
-    @Column(nullable = false)
-    private String bookingUrl;
+    private String bookingUrl; // 예약 URL
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -42,8 +42,24 @@ public class Train extends BaseEntity {
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
-    public Train(String name, String description, String imageUrl, String operatingDays,
-                 String fare, String routeImageUrl, String bookingUrl, Region region) {
+    @Builder
+    public Train(String name, String description, String imageUrl,
+                 String operatingDays, String fare, String routeImageUrl,
+                 String bookingUrl, Region region) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.operatingDays = operatingDays;
+        this.fare = fare;
+        this.routeImageUrl = routeImageUrl;
+        this.bookingUrl = bookingUrl;
+        this.region = region;
+    }
+    
+    // 기차 정보 업데이트 메서드
+    public void update(String name, String description, String imageUrl,
+                      String operatingDays, String fare, String routeImageUrl,
+                      String bookingUrl, Region region) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;

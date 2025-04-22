@@ -80,8 +80,9 @@ public class TrainService {
 
         Region region = regionRepository.findById(dto.getRegionId())
                 .orElseThrow(() -> new EntityNotFoundException("지역을 찾을 수 없습니다: " + dto.getRegionId()));
-        // 새 객체로 교체
-        Train updatedTrain = new Train(
+        
+        // 기존 객체의 update 메서드 활용
+        train.update(
                 dto.getName(),
                 dto.getDescription(),
                 dto.getImageUrl(),
@@ -91,9 +92,8 @@ public class TrainService {
                 dto.getBookingUrl(),
                 region
         );
-        // ID 유지
-        updatedTrain = trainRepository.save(updatedTrain);
-
+        
+        Train updatedTrain = trainRepository.save(train);
         return TrainDetailDto.fromEntity(updatedTrain, false);
     }
 

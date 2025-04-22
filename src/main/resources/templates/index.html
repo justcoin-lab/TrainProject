@@ -769,14 +769,21 @@
 
     // 로고 이미지 로딩 오류 처리
     document.addEventListener('DOMContentLoaded', function() {
+        // 이미지 경로 확인
+        console.log('로고 이미지 경로:', document.querySelector('.navbar-brand img').src);
+        
         const logoImg = document.querySelector('.navbar-brand img');
         logoImg.onerror = function() {
+            console.error('이미지 로드 실패:', this.src);
             // 이미지 로딩 실패시 다른 이미지로 시도
             if(this.src.includes('train_logo_test.jpg')) {
+                console.log('두 번째 이미지 시도:', '/images/traintravel_logo.jpg');
                 this.src = '/images/traintravel_logo.jpg';
             } else if(this.src.includes('traintravel_logo.jpg')) {
+                console.log('세 번째 이미지 시도:', '/images/traintravel_logo.png');
                 this.src = '/images/traintravel_logo.png';
             } else {
+                console.log('모든 이미지 실패, 텍스트로 대체');
                 // 모든 이미지 실패시 텍스트로 대체
                 const brand = document.querySelector('.navbar-brand');
                 brand.innerHTML = '<span class="fw-bold fs-4">이색 기차여행</span>';

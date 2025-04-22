@@ -21,6 +21,7 @@ public class Country extends BaseEntity {
     private List<Region> regions = new ArrayList<>();
 
     public Country(String name) {
+
         this.name = name;
     }
 }

@@ -4,144 +4,588 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>이색 기차여행</title>
+    <title>TrainTravel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-    body {
-        font-family: 'Noto Sans KR', sans-serif;
-        background: linear-gradient(to bottom, #fafafa, #eef3f8);
-        color: #333;
-        transition: background-color 0.3s ease;
-    }
-    .hero-banner {
-        background-size: cover;
-        background-position: center;
-        min-height: 450px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-        animation: fadeIn 1s ease forwards;
-    }
-    .hero-banner h1 {
-        font-weight: 700;
-        font-size: 3.2rem;
-        animation: slideUp 1s ease forwards;
-    }
-    .hero-banner p {
-        font-size: 1.3rem;
-        opacity: 0;
-        animation: fadeIn 1.5s ease forwards;
-        animation-delay: 0.5s;
-    }
-    .train-card {
-        border: none;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        transform: translateY(0);
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-    .train-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    .train-card img {
-        object-fit: cover;
-        height: 220px;
-        transition: transform 0.5s ease;
-    }
-    .train-card:hover img {
-        transform: scale(1.05);
-    }
-    .train-card .card-body {
-        text-align: center;
-    }
-    .train-card .btn-primary {
-        background-color: #003366;
-        border-color: #003366;
-        border-radius: 30px;
-        transition: background-color 0.3s ease;
-    }
-    .train-card .btn-primary:hover {
-        background-color: #001f4d;
-        border-color: #001f4d;
-    }
+        :root {
+            --primary: #0056a4;
+            --primary-dark: #00407a;
+            --accent: #e76f35;
+            --light-bg: #f8f9fa;
+            --text-dark: #222;
+            --text-light: #666;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
 
-    .navbar .dropdown-menu {
-        border: none;
-        border-radius: 12px;
-        backdrop-filter: blur(15px);
-        background-color: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(10px);
-        transition: all 0.3s ease;
-    }
-    .navbar .dropdown-menu .dropdown-item {
-        padding: 12px 20px;
-        font-weight: 500;
-        color: #333;
-        transition: background-color 0.2s ease, color 0.2s ease;
-    }
-    .navbar .dropdown-menu .dropdown-item:hover {
-        background-color: rgba(0, 64, 128, 0.8);
-        color: white;
-    }
-    .navbar .nav-item.dropdown:hover > .dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #fff;
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
 
-    .navbar .dropdown-submenu .dropdown-menu {
-        top: 0;
-        left: 100%;
-        margin-left: 0.2rem;
-        transform: translateX(10px);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-    .navbar .dropdown-submenu:hover > .dropdown-menu {
-        transform: translateX(0);
-        opacity: 1;
-        visibility: visible;
-    }
+        /* 헤더 & 내비게이션 */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 12px 0;
+            transition: all 0.4s ease;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
 
-    .navbar .nav-link.dropdown-toggle::after {
-        content: "▼";
-        font-size: 0.6rem;
-        margin-left: 5px;
-        vertical-align: middle;
-        transition: transform 0.2s ease;
-    }
-    .navbar .nav-item.dropdown:hover .nav-link.dropdown-toggle::after {
-        transform: rotate(180deg);
-    }
+        .navbar.scrolled {
+            padding: 8px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-    /* 애니메이션 */
-    @keyframes fadeIn {
-        0% {opacity: 0;}
-        100% {opacity: 1;}
-    }
-    @keyframes slideUp {
-        0% {opacity: 0; transform: translateY(20px);}
-        100% {opacity: 1; transform: translateY(0);}
-    }
-</style>
+        .navbar .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .navbar .navbar-brand img {
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled .navbar-brand img {
+            height: 35px;
+        }
+
+        .navbar .nav-link {
+            font-weight: 500;
+            color: var(--text-dark);
+            padding: 0.6rem 1.2rem;
+            position: relative;
+            letter-spacing: 0.01em;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link:hover {
+            color: var(--accent);
+        }
+
+        .navbar .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--accent);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .navbar .nav-link:hover:after,
+        .navbar .dropdown.show > .nav-link:after {
+            width: 70%;
+            left: 15%;
+            opacity: 0;
+        }
+
+        /* 메가 메뉴 스타일 */
+        .mega-menu {
+            width: 60vw;
+            max-width: 900px;
+            min-width: 320px;
+            padding: 30px 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            background-color: rgba(255, 255, 255, 0.98);
+            border: none;
+            margin-top: 15px;
+            transition: all 0.4s ease;
+        }
+
+        .dropdown-menu.show.mega-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .country-tab {
+            cursor: pointer;
+            font-weight: 500;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            margin: 0 8px;
+        }
+
+        .country-tab:hover,
+        .country-tab.active {
+            background-color: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 111, 53, 0.3);
+        }
+
+        .region-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 0 5px;
+        }
+
+        .region-item {
+            flex: 0 1 auto;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: var(--light-bg);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .region-item:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,86,164,0.2);
+        }
+
+        .region-item a {
+            color: inherit;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+        }
+
+        /* 히어로 배너 */
+        .hero-banner {
+            position: relative;
+            background-size: cover;
+            background-position: center 30%;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-weight: 700;
+            font-size: 3.2rem;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.4rem;
+            max-width: 600px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .hero-btn {
+            padding: 12px 30px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .hero-btn:hover {
+            background-color: #d15f29;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(231, 111, 53, 0.3);
+            color: white;
+        }
+
+        /* 섹션 타이틀 */
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            font-size: 2.2rem;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background-color: var(--accent);
+        }
+
+        .section-title.text-center:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 지역 섹션 */
+        .region-section {
+            margin-bottom: 5rem;
+        }
+
+        .region-header {
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .region-header:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        /* 기차 카드 */
+        .train-card {
+            border: none;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.4s ease;
+            height: 100%;
+            background-color: white;
+        }
+
+        .train-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .train-card .card-img-wrapper {
+            overflow: hidden;
+            height: 220px;
+            position: relative;
+        }
+
+        .train-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .train-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .train-card .card-body {
+            padding: 1.8rem;
+        }
+
+        .train-card .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            line-height: 1.4;
+        }
+
+        .train-card .train-info {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .card-btn {
+            background-color: var(--primary);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .card-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,86,164,0.25);
+            color: white;
+        }
+
+        /* 국가별 섹션 */
+        .country-section {
+            padding: 80px 0;
+        }
+
+        .country-section:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        /* 푸터 */
+        .footer {
+            background-color: #05233d;
+            color: rgba(255,255,255,0.8);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-logo {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            margin-bottom: 2rem;
+        }
+
+        .footer-links h5 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* 버튼 스타일 */
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 50px;
+            padding: 8px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,86,164,0.2);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+            border-radius: 50px;
+            padding: 8px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,86,164,0.2);
+        }
+
+        /* 모바일 반응형 조정 */
+        @media (max-width: 991.98px) {
+            .mega-menu {
+                width: 100%;
+                position: static;
+                box-shadow: none;
+                padding: 15px;
+            }
+
+            .region-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .region-item {
+                margin-bottom: 10px;
+                flex: 0 0 45%;
+            }
+
+            .navbar-collapse {
+                background: white;
+                padding: 20px;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                max-height: 80vh;
+                overflow-y: auto;
+                margin-top: 10px;
+            }
+
+            .hero-banner {
+                height: 500px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .country-section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .hero-banner {
+                height: 400px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .country-section {
+                padding: 40px 0;
+            }
+
+            .mega-menu {
+                padding: 10px;
+            }
+
+            .country-tab {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                margin: 0 5px;
+            }
+
+            .region-item {
+                flex: 0 0 100%;
+                padding: 8px 15px;
+            }
+        }
+
+        /* 추가 애니메이션 및 효과 */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.inview {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 스크롤 인디케이터 */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-15px);
+            }
+            60% {
+                transform: translateY(-7px);
+            }
+        }
+
+        /* 새로운 스타일 - 기차 카드에 레이블 */
+        .train-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--accent);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 2;
+        }
+
+        /* 새로운 스타일 - 리본 효과 */
+        .ribbon {
+            position: absolute;
+            top: 15px;
+            left: -10px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 2;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .ribbon:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            border-left: 10px solid var(--primary);
+            border-top: 16px solid transparent;
+            border-bottom: 16px solid transparent;
+        }
+    </style>
 </head>
 <body>
 
 <!-- 네비게이션 -->
-<header class="sticky-top">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/images/traintravel_logo.png" alt="이색 기차여행" height="40">
+                <img th:src="@{/images/train_logo_test.jpg}" src="/images/train_logo_test.jpg" alt="이색 기차여행" height="45">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -149,36 +593,40 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <!-- 관광기차여행 드롭다운 -->
+                    <!-- 관광기차여행 메가메뉴 -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">관광기차여행</a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#">한국</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#korea-capital">수도권</a></li>
-                                    <li><a class="dropdown-item" href="#korea-gangwon">강원도</a></li>
-                                    <li><a class="dropdown-item" href="#korea-chungcheong">충청도</a></li>
-                                    <li><a class="dropdown-item" href="#korea-gyeongsang">경상도</a></li>
-                                    <li><a class="dropdown-item" href="#korea-jeolla">전라도</a></li>
-                                    <li><a class="dropdown-item" href="#korea-jeju">제주도</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#">일본</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#japan-hokkaido">홋카이도</a></li>
-                                    <li><a class="dropdown-item" href="#japan-tohoku">도호쿠</a></li>
-                                    <li><a class="dropdown-item" href="#japan-hokuriku-shinetsu">호쿠리쿠신에쓰</a></li>
-                                    <li><a class="dropdown-item" href="#japan-kanto">간토</a></li>
-                                    <li><a class="dropdown-item" href="#japan-tokai">도카이</a></li>
-                                    <li><a class="dropdown-item" href="#japan-kansai">간사이</a></li>
-                                    <li><a class="dropdown-item" href="#japan-chugoku">주고쿠</a></li>
-                                    <li><a class="dropdown-item" href="#japan-shikoku">시고쿠</a></li>
-                                    <li><a class="dropdown-item" href="#japan-kyushu">규슈</a></li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <a class="nav-link dropdown-toggle" href="#" id="megaMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            관광기차여행
+                        </a>
+                        <div class="dropdown-menu mega-menu p-3" aria-labelledby="megaMenuLink" data-bs-auto-close="outside">
+                            <div class="d-flex justify-content-center mb-4 country-tabs">
+                                <div class="country-tab active" data-country="korea">한국</div>
+                                <div class="country-tab" data-country="japan">일본</div>
+                            </div>
+
+                            <div class="region-container text-center">
+                                <div id="korea-region-list" class="region-row justify-content-center">
+                                    <div class="region-item"><a href="#korea-capital">수도권</a></div>
+                                    <div class="region-item"><a href="#korea-gangwon">강원도</a></div>
+                                    <div class="region-item"><a href="#korea-chungcheong">충청도</a></div>
+                                    <div class="region-item"><a href="#korea-gyeongsang">경상도</a></div>
+                                    <div class="region-item"><a href="#korea-jeolla">전라도</a></div>
+                                    <div class="region-item"><a href="#korea-jeju">제주도</a></div>
+                                </div>
+
+                                <div id="japan-region-list" class="region-row justify-content-center d-none">
+                                    <div class="region-item"><a href="#japan-hokkaido">홋카이도</a></div>
+                                    <div class="region-item"><a href="#japan-tohoku">도호쿠</a></div>
+                                    <div class="region-item"><a href="#japan-hokuriku-shinetsu">호쿠리쿠신에쓰</a></div>
+                                    <div class="region-item"><a href="#japan-kanto">간토</a></div>
+                                    <div class="region-item"><a href="#japan-tokai">도카이</a></div>
+                                    <div class="region-item"><a href="#japan-kansai">간사이</a></div>
+                                    <div class="region-item"><a href="#japan-chugoku">주고쿠</a></div>
+                                    <div class="region-item"><a href="#japan-shikoku">시코쿠</a></div>
+                                    <div class="region-item"><a href="#japan-kyushu">규슈</a></div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
 
                     <li class="nav-item"><a class="nav-link" href="/community">커뮤니티</a></li>
@@ -189,15 +637,15 @@
                 </ul>
 
                 <!-- 로그인/로그아웃 -->
-                <div class="d-flex">
+                <div>
                     <div sec:authorize="isAnonymous()">
-                        <a href="/auth/login" class="btn btn-outline-primary me-2">로그인</a>
-                        <a href="/auth/register" class="btn btn-primary">회원가입</a>
+                        <a href="/auth/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
+                        <a href="/auth/register" class="btn btn-primary btn-sm">회원가입</a>
                     </div>
                     <div sec:authorize="isAuthenticated()">
-                        <a href="/my-page/bookmarks" class="btn btn-outline-primary me-2">마이페이지</a>
+                        <a href="/mypage/bookmarks" class="btn btn-outline-primary btn-sm me-2">마이페이지</a>
                         <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-outline-danger">로그아웃</button>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">로그아웃</button>
                         </form>
                     </div>
                 </div>
@@ -207,55 +655,96 @@
 </header>
 
 <!-- 메인 배너 -->
-<section class="hero-banner" style="background-image: url('/images/train-banner.jpg'); background-size: cover; background-position: center;">
-    <div class="container text-center text-white py-5">
-        <h1 class="display-4 fw-bold mt-5">관광열차여행</h1>
-        <p class="lead mt-3 mb-5">관광 열차로 여행을 떠나보세요</p>
+<section class="hero-banner" th:style="|background-image: url('@{/images/train-banner.jpg}');|">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 data-aos="fade-up">관광열차로 특별한 여행을</h1>
+                <p data-aos="fade-up" data-aos-delay="100">
+                    아름다운 풍경과 특별한 경험을 선사하는 관광열차. 창밖으로 펼쳐지는 절경과 함께 잊지 못할 추억을 만들어 보세요.
+                </p>
+                <a href="#featured-trains" class="hero-btn" data-aos="fade-up" data-aos-delay="200">
+                    <i class="bi bi-train-front"></i> 열차 둘러보기
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <div class="bi bi-chevron-down"></div>
+        <span>아래로 스크롤</span>
     </div>
 </section>
 
 <!-- 한국 지역 기차 목록 -->
-<section class="py-5">
+<section class="country-section py-5" id="featured-trains">
     <div class="container">
-        <h2 class="text-center mb-5" data-aos="fade-down">한국의 이색 기차여행</h2>
+        <h2 class="section-title text-center mb-5" data-aos="fade-down">한국의 이색 기차여행</h2>
+
         <div th:each="regionData : ${countriesData.get('한국')}">
-            <div class="region-section mb-5" th:attr="id=${regionData['region'].name}">
-                <h3 class="mb-4" th:text="${regionData['region'].name}">지역명</h3>
+            <div class="region-section" th:id="'korea-' + ${regionData['region'].name.toLowerCase()}">
+                <h3 class="region-header" th:text="${regionData['region'].name}">지역명</h3>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <div class="col" th:each="train : ${regionData['trains']}">
-                        <div class="card h-100 train-card" data-aos="fade-up">
-                            <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                        <div class="card train-card fade-up">
+                            <div class="card-img-wrapper">
+                                <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                            </div>
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${train.name}">기차 이름</h5>
-                                <a th:href="@{/trains/{id}(id=${train.id})}" class="btn btn-primary">더 많은 정보</a>
+                                <a th:href="@{/trains/{id}(id=${train.id})}" class="card-btn">자세히 보기</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </section>
 
 <!-- 일본 지역 기차 목록 -->
-<section class="py-5 bg-light">
+<section class="country-section py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5" data-aos="fade-down">일본의 이색 기차여행</h2>
+        <h2 class="section-title text-center mb-5" data-aos="fade-down">일본의 이색 기차여행</h2>
+
         <div th:each="regionData : ${countriesData.get('일본')}">
-            <div class="region-section mb-5" th:attr="id=${regionData['region'].name}">
-                <h3 class="mb-4" th:text="${regionData['region'].name}">지역명</h3>
+            <div class="region-section" th:id="'japan-' + ${regionData['region'].name.toLowerCase()}">
+                <h3 class="region-header" th:text="${regionData['region'].name}">지역명</h3>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <div class="col" th:each="train : ${regionData['trains']}">
-                        <div class="card h-100 train-card" data-aos="fade-up">
-                            <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                        <div class="card train-card fade-up">
+                            <div class="card-img-wrapper">
+                                <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                            </div>
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${train.name}">기차 이름</h5>
-                                <a th:href="@{/trains/{id}(id=${train.id})}" class="btn btn-primary">더 많은 정보</a>
+                                <a th:href="@{/trains/{id}(id=${train.id})}" class="card-btn">자세히 보기</a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 여행 팁 섹션 -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="section-title" data-aos="fade-right">기차여행 팁</h2>
+                <p class="mb-4">관광열차로 떠나는 여행을 계획하고 계신가요? 다음 팁들을 참고하여 더욱 편안하고 즐거운 여행을 준비하세요.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 인기 노선은 최소 1-2개월 전 예약하세요</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 계절별 특색 있는 풍경을 확인하세요</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 역 근처 관광지를 미리 조사하세요</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 열차 내 제공되는 서비스를 확인하세요</li>
+                </ul>
+                <a href="/tips" class="card-btn">더 많은 팁 보기</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://via.placeholder.com/600x400" class="img-fluid rounded" alt="기차여행 팁" data-aos="fade-left">
             </div>
         </div>
     </div>
@@ -268,30 +757,137 @@
 
 <!-- 부트스트랩 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- 드롭다운 서브메뉴 활성화 -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const submenus = document.querySelectorAll('.dropdown-submenu');
-        submenus.forEach(function (submenu) {
-            submenu.addEventListener('mouseenter', function () {
-                let dropdown = this.querySelector('.dropdown-menu');
-                if (dropdown) dropdown.classList.add('show');
-            });
-            submenu.addEventListener('mouseleave', function () {
-                let dropdown = this.querySelector('.dropdown-menu');
-                if (dropdown) dropdown.classList.remove('show');
-            });
-        });
-    });
-</script>
-
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
 <script>
+    // AOS 초기화
     AOS.init({
         duration: 800,
-        once: true
+        once: true,
+        offset: 150
+    });
+
+    // 로고 이미지 로딩 오류 처리
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoImg = document.querySelector('.navbar-brand img');
+        logoImg.onerror = function() {
+            // 이미지 로딩 실패시 다른 이미지로 시도
+            if(this.src.includes('train_logo_test.jpg')) {
+                this.src = '/images/traintravel_logo.jpg';
+            } else if(this.src.includes('traintravel_logo.jpg')) {
+                this.src = '/images/traintravel_logo.png';
+            } else {
+                // 모든 이미지 실패시 텍스트로 대체
+                const brand = document.querySelector('.navbar-brand');
+                brand.innerHTML = '<span class="fw-bold fs-4">이색 기차여행</span>';
+            }
+        };
+    });
+
+    // 스크롤 시 헤더 스타일 변경
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Fade-up 애니메이션 관찰자
+    document.addEventListener('DOMContentLoaded', function() {
+        const fadeElements = document.querySelectorAll('.fade-up');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('inview');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        fadeElements.forEach(element => {
+            observer.observe(element);
+        });
+    });
+
+    // 드롭다운 호버 효과 (데스크톱)
+    if (window.innerWidth > 992) {
+        document.querySelectorAll('.navbar .dropdown').forEach(function(dropdown) {
+            dropdown.addEventListener('mouseenter', function() {
+                if (!this.querySelector('.dropdown-toggle').classList.contains('show')) {
+                    this.querySelector('.dropdown-toggle').click();
+                }
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                if (this.querySelector('.dropdown-toggle').classList.contains('show')) {
+                    this.querySelector('.dropdown-toggle').click();
+                }
+            });
+        });
+    }
+
+    // 탭 스크립트
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.country-tab');
+        const koreaList = document.getElementById('korea-region-list');
+        const japanList = document.getElementById('japan-region-list');
+        const megaMenu = document.querySelector('.mega-menu');
+
+        // 탭 클릭 이벤트 핸들러
+        function handleTabClick(tab, initialLoad = false) {
+            // 모든 탭에서 active 클래스 제거
+            tabs.forEach(t => t.classList.remove('active'));
+            // 클릭한 탭에 active 클래스 추가
+            tab.classList.add('active');
+
+            // 선택된 국가에 따라 지역 목록 표시
+            if (tab.dataset.country === 'korea') {
+                koreaList.classList.remove('d-none');
+                japanList.classList.add('d-none');
+            } else if (tab.dataset.country === 'japan') {
+                japanList.classList.remove('d-none');
+                koreaList.classList.add('d-none');
+            }
+            
+            // 탭 클릭 시 드롭다운 메뉴가 닫히지 않도록 이벤트 중지
+            if (!initialLoad && event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+
+        // 각 탭에 이벤트 리스너 등록
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(event) {
+                handleTabClick(this);
+            });
+        });
+
+        // 페이지 로드 시 기본 탭 상태 설정
+        const defaultTab = document.querySelector('.country-tab.active');
+        if (defaultTab) {
+            handleTabClick(defaultTab, true);
+        }
+    });
+
+    // 스무스 스크롤
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
 </script>
 </body>

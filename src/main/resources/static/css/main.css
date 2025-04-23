@@ -368,6 +368,25 @@ body {
     background-color: var(--light-bg);
 }
 
+/* 네비게이션 테두리 제거 */
+.navbar .nav-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.navbar .dropdown-toggle:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* 테두리 제거 - 추가 */
+.navbar .nav-item .nav-link:focus,
+.navbar .nav-item.dropdown .dropdown-toggle:focus {
+    outline: 0 !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
 /* 푸터 */
 .footer {
     background-color: #05233d;
@@ -377,10 +396,6 @@ body {
 
 .footer-logo {
     margin-bottom: 1.5rem;
-}
-
-.footer-links {
-    margin-bottom: 2rem;
 }
 
 .footer-links h5 {

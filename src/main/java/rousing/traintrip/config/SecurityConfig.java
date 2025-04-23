@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import rousing.traintrip.service.UserService;
@@ -16,10 +18,9 @@ import rousing.traintrip.service.UserService;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Autowired
+
     private final UserService userService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +32,10 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/")
+                        .loginProcessingUrl("/auth/login")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -41,13 +45,27 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/**") // API 요청에서는 CSRF 무시
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedPage("/access-denied")
                 );
 
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return userService;
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authProvider);
     }
 }

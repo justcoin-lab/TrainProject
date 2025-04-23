@@ -33,7 +33,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시글 저장 통합 테스트")
     void saveBoardTest() {
-        //given
+        //given - 게시글 저장
         BoardCreateRequest request = BoardCreateRequest.builder()
                 .title("통합 테스트 제목")
                 .content("통합 테스트 내용")
@@ -60,7 +60,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시글 수정")
     void updateBoardTest() {
-        //given
+        //given - 게시글 저장
 
         BoardCreateRequest request = BoardCreateRequest.builder()
                 .title("통합 테스트 제목")
@@ -70,7 +70,7 @@ class BoardServiceTest {
 
         Long boardId = boardService.save(request);
 
-        //when
+        //when - 게시글 수정
 
         BoardUpdateRequest updateRequest = BoardUpdateRequest.builder()
                 .id(boardId)
@@ -79,12 +79,21 @@ class BoardServiceTest {
                 .build();
 
         boardService.update(updateRequest);
+
+        //then - 수정된 게시글 확인
+
+        BoardDTO updateBoard = boardService.findById(boardId);
+        assertThat(updateBoard.getTitle()).isEqualTo("수정된 제목");
+        assertThat(updateBoard.getContent()).isEqualTo("수정된 내용");
+        assertThat(updateBoard.getWriter()).isEqualTo("통합 테스트 작성자");
+        assertThat(updateBoard.getModifiedDate()).isNotNull();
+
     }
 
     @Test
     @DisplayName("게시글 검색")
     void searchBoardTest() {
-        //given
+        //given - 게시글 저장
 
         BoardCreateRequest request = BoardCreateRequest.builder()
                 .title("통합 테스트 제목")
@@ -94,10 +103,10 @@ class BoardServiceTest {
 
         Long boardId = boardService.save(request);
 
-        //when
+        //when - 게시글 조회
         BoardDTO boardDTO = boardService.findById(boardId);
 
-        //then
+        //then - 저장된 게시글 확인
         assertThat(boardDTO.getTitle()).isEqualTo("통합 테스트 제목");
         assertThat(boardDTO.getContent()).isEqualTo("통합 테스트 내용");
 

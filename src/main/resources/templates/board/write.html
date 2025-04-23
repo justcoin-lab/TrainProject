@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"><title></title></head>
+
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container mt-5 pt-5">
+    <h2>게시글 작성</h2>
+
+    <form th:action="@{/board/write}" th:object="${boardCreateRequest}" method="post">
+        <div class="form-group mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}">
+            <div class="text-danger" th:if="${#fields.hasErrors('title')}"
+            th:errors="*{title}"></div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" th:field="*{content}" rows="10"></textarea>
+            <div class="text-danger" th:if="${#fields.hasErrors('content')}"
+            th:errors="*{content}"></div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="writer" class="form-label">작성자</label>
+            <input type="text" class="form-control" id="writer" th:field="*{writer}">
+            <div class="text-danger" th:if="${#fields.hasErrors('writer')}"
+            th:errors="*{writer}"></div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3 mb-3">
+            <a th:href="@{/board/list}" class="btn btn-secondary">취소</a>
+            <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+    </form>
+</div>
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- 스크립트 삽입 -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"><title></title></head>
+
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container mt-5 pt-5">
+  <h2>게시글 수정</h2>
+
+  <form th:action="@{/board/edit/{id}(id=${boardUpdateRequest.id})}"
+        th:object="${boardUpdateRequest}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+    <div class="form-group mb-3">
+      <label for="title" class="form-label">제목</label>
+      <input type="text" class="form-control" id="title" th:field="*{title}">
+      <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="writer" class="form-label">작성자</label>
+      <input type="text" class="form-control" id="writer" th:value="${writer}" readonly>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="content" class="form-label">내용</label>
+      <textarea class="form-control" id="content" th:field="*{content}" rows="10"></textarea>
+      <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <a th:href="@{/board/{id}(id=${boardUpdateRequest.id})}" class="btn btn-secondary">취소</a>
+      <button type="submit" class="btn btn-primary">수정</button>
+    </div>
+
+
+  </form>
+
+
+</div>
+
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- 스크립트 삽입 -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+</body>
+
+</html>

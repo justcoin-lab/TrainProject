@@ -18,22 +18,22 @@ public class TrainUpsertDto {
     @NotBlank(message = "기차 이름은 필수입니다")
     private String name;
 
-//    @NotBlank(message = "설명은 필수입니다")
+    @NotBlank(message = "설명은 필수입니다")
     private String description;
 
-//    @NotBlank(message = "이미지 URL은 필수입니다")
+    @NotBlank(message = "이미지 URL은 필수입니다")
     private String imageUrl;
 
-//    @NotBlank(message = "운행일은 필수입니다")
+    @NotBlank(message = "운행일은 필수입니다")
     private String operatingDays;
 
-//    @NotBlank(message = "요금은 필수입니다")
+    @NotBlank(message = "요금은 필수입니다")
     private String fare;
 
-//    @NotBlank(message = "노선 이미지 URL은 필수입니다")
+    @NotBlank(message = "노선 이미지 URL은 필수입니다")
     private String routeImageUrl;
 
-//    @NotBlank(message = "예약 URL은 필수입니다")
+    @NotBlank(message = "예약 URL은 필수입니다")
     private String bookingUrl;
 
     @NotNull(message = "지역 ID는 필수입니다")

@@ -13,12 +13,13 @@ public class Bookmark extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user; // 북마크를 등록한 사용자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "train_id")
-    private Train train;
+    private Train train; // 북마크한 기차여행
 
+    @Builder
     public Bookmark(User user, Train train) {
         this.user = user;
         this.train = train;

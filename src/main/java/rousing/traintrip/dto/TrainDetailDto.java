@@ -1,14 +1,15 @@
 package rousing.traintrip.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rousing.traintrip.domain.Train;
 
-// 기차여행 상세 정보 DTO
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainDetailDto {
@@ -22,21 +23,24 @@ public class TrainDetailDto {
     private String bookingUrl;
     private Long regionId;
     private String regionName;
+    private String countryName;
     private boolean bookmarked;
 
+
     public static TrainDetailDto fromEntity(Train train, boolean bookmarked) {
-        TrainDetailDto dto = new TrainDetailDto();
-        dto.id = train.getId();
-        dto.name = train.getName();
-        dto.description = train.getDescription();
-        dto.imageUrl = train.getImageUrl();
-        dto.operatingDays = train.getOperatingDays();
-        dto.fare = train.getFare();
-        dto.routeImageUrl = train.getRouteImageUrl();
-        dto.bookingUrl = train.getBookingUrl();
-        dto.regionId = train.getRegion().getId();
-        dto.regionName = train.getRegion().getName();
-        dto.bookmarked = bookmarked;
-        return dto;
+        return TrainDetailDto.builder()
+                .id(train.getId())
+                .name(train.getName())
+                .description(train.getDescription())
+                .imageUrl(train.getImageUrl())
+                .operatingDays(train.getOperatingDays())
+                .fare(train.getFare())
+                .routeImageUrl(train.getRouteImageUrl())
+                .bookingUrl(train.getBookingUrl())
+                .regionId(train.getRegion().getId())
+                .regionName(train.getRegion().getName())
+                .countryName(train.getRegion().getCountry().getName())
+                .bookmarked(bookmarked)
+                .build();
     }
 }

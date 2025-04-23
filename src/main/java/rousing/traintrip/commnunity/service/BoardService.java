@@ -27,6 +27,17 @@ public class BoardService {
         return boardRepository.save(request.toEntity()).getId();
     }
 
+    //게시글 수정
+    @Transactional
+    public Long update(BoardUpdateRequest request) {
+        Board board = boardRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException
+                        ("게시글을 찾을 수 없습니다. ID: " + request.getId()));
+
+        board.update(request.getTitle(), request.getContent());
+
+        return board.getId();
+    }
 
     //게시글 상세 조회
     public BoardDTO findById(Long id) {

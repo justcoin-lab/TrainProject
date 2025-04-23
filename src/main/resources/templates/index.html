@@ -65,12 +65,14 @@
         <h2 class="section-title text-center mb-5 special-title" data-aos="fade-down">일본의 <span class="highlight">이색</span> 기차여행</h2>
 
         <div th:each="regionData : ${countriesData.get('일본')}">
-            <div class="region-section mb-5" th:attr="id=${regionData['region'].name}">
-                <h3 class="mb-4" th:text="${regionData['region'].name}">지역명</h3>
+            <div class="region-section" th:id="'japan-' + ${regionData['region'].name.toLowerCase()}">
+                <h3 class="region-header" th:text="${regionData['region'].name}">지역명</h3>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <div class="col" th:each="train : ${regionData['trains']}">
-                        <div class="card h-100 train-card" data-aos="fade-up">
-                            <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                        <div class="card train-card fade-up">
+                            <div class="card-img-wrapper">
+                                <img th:src="${train.imageUrl}" class="card-img-top" alt="기차 이미지">
+                            </div>
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${train.name}">기차 이름</h5>
                                 <a th:href="@{/trains/{id}(id=${train.id})}" class="card-btn">자세히 보기</a>
@@ -96,10 +98,10 @@
                     <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 역 근처 관광지를 미리 조사하세요</li>
                     <li class="mb-3"><i class="bi bi-check-circle-fill text-primary me-2"></i> 열차 내 제공되는 서비스를 확인하세요</li>
                 </ul>
-                <a href="/tips" class="card-btn">더 많은 팁 보기</a>
+                <a href="/tips" class="card-btn">더 많은 제안 보기</a>
             </div>
             <div class="col-lg-6">
-                <img th:src="@{/images/travel-tips.jpg}" src="/images/travel-tips.jpg" class="img-fluid rounded" alt="기차여행 팁" data-aos="fade-left">
+                <img th:src="@{/images/checklist.png}" src="/images/checklist.png" class="img-fluid rounded" alt="기차여행 체크리스트" data-aos="fade-left">
             </div>
         </div>
     </div>

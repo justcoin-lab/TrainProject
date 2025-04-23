@@ -72,4 +72,14 @@ public class BoardService {
         return boardRepository.findByWriter(writer,pageable)
                 .map(BoardDTO::fromEntity);
     }
+    
+    // 게시글 삭제
+    @Transactional
+    public void delete(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException
+                        ("게시글을 찾을 수 없습니다. ID: " + id));
+
+        boardRepository.delete(board);
+    }
 }

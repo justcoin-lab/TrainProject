@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${train.name} + ' - 이색 기차여행'">기차 이름 - 이색 기차여행</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/style.css">
+
+<!-- 헤더 삽입 -->
+<head th:replace="fragments/header :: head">
 </head>
+
+<!-- 네비게이션 -->
+<header th:replace="fragments/header :: header">
+</header>
+
 <body>
-<!-- 헤더는 메인 페이지와 동일하므로 생략 (Thymeleaf fragment로 분리하는 것이 좋음) -->
 
 <!-- 기차여행 상세 정보 -->
 <div class="container py-5">

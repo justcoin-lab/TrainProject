@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: head">
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<div class="container my-5 pt-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-primary" th:text="${train.id != null ? '기차여행 수정' : '새 기차여행 등록'}">기차여행 등록/수정</h2>
+            <p class="text-muted">기차여행 정보</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form th:action="@{/admin/trains}" th:object="${train}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="mb-3">
+                    <label for="name" class="form-label">기차여행 이름</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                        기차여행 이름은 필수입니다.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="regionId" class="form-label">지역</label>
+                    <select class="form-select" id="regionId" th:field="*{regionId}" required>
+                        <option value="">지역을 선택하세요</option>
+                        <optgroup th:each="country : ${countries}" th:label="${country.name}">
+                            <option th:each="region : ${country.regions}" 
+                                    th:value="${region.id}" 
+                                    th:text="${region.name}">지역명</option>
+                        </optgroup>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('regionId')}" th:errors="*{regionId}">
+                        지역을 선택해주세요.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="imageUrl" class="form-label">대표 이미지 URL</label>
+                    <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}">
+                        이미지 URL은 필수입니다.
+                    </div>
+                    <small class="form-text text-muted">기차여행 대표 이미지의 URL을 입력하세요.</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="routeImageUrl" class="form-label">노선 이미지 URL</label>
+                    <input type="text" class="form-control" id="routeImageUrl" th:field="*{routeImageUrl}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('routeImageUrl')}" th:errors="*{routeImageUrl}">
+                        노선 이미지 URL은 필수입니다.
+                    </div>
+                    <small class="form-text text-muted">기차 노선도 이미지의 URL을 입력하세요.</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">기차여행 설명</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="5" required></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                        기차여행 간단정보를 입력해주세요.
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="operatingDays" class="form-label">운행일</label>
+                        <input type="text" class="form-control" id="operatingDays" th:field="*{operatingDays}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('operatingDays')}" th:errors="*{operatingDays}">
+                            기차여행 운행일을 입력해주세요.
+                        </div>
+                        <small class="form-text text-muted">예: 1~3월 운행, 매일(연중무휴), 주말운행, 월/수/금 운행</small>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="fare" class="form-label">요금</label>
+                        <input type="text" class="form-control" id="fare" th:field="*{fare}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fare')}" th:errors="*{fare}">
+                            기차여행 요금을 입력해주세요.
+                        </div>
+                        <small class="form-text text-muted">예: 성인 30,000원 / 어린이 15,000원</small>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="bookingUrl" class="form-label">예약 URL</label>
+                    <input type="text" class="form-control" id="bookingUrl" th:field="*{bookingUrl}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('bookingUrl')}" th:errors="*{bookingUrl}">
+                        예약 URL을 넣어주세요.
+                    </div>
+                    <small class="form-text text-muted">기차여행을 예약할 수 있는 링크를 넣어주시면 됩니다.</small>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a th:href="@{/admin/trains}" class="btn btn-secondary">취소</a>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">입력 도움말</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>이미지 URL</strong>: 웹에서 접근 가능한 이미지</p>
+                    <p><strong>노선도</strong>: 기차 노선을 보여주는 이미지</p>
+                    <p><strong>운행일</strong>: 기차의 운행 스케줄을 간략하게 입력</p>
+                    <p><strong>요금</strong>: 기본 요금을 입력하세요.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<th:block th:replace="fragments/footer :: scripts"></th:block>
+
+<script>
+// 폼 유효성 검사 활성화
+(function() {
+    'use strict';
+    
+    // 모든 폼에 대한 유효성 검사 활성화
+    var forms = document.querySelectorAll('.needs-validation');
+    
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+</body>
+</html>

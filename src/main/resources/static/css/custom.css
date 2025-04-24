@@ -1,0 +1,35 @@
+/* 관광기차여행 메뉴 아이템 클릭 시 파란색 테두리 제거 */
+.navbar .nav-link,
+.navbar .dropdown-toggle {
+    outline: none !important;
+}
+
+.navbar .nav-item.dropdown .dropdown-toggle:focus {
+    box-shadow: none !important;
+    outline: 0 !important;
+    border: none !important;
+}
+
+/* Safari 브라우저용 추가 스타일 */
+.navbar .nav-item a:focus {
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/* Bootstrap 기본 포커스 스타일 재정의 */
+.btn:focus, .btn:active:focus, .btn.active:focus,
+.btn.focus, .btn:active.focus, .btn.active.focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* 관광기차여행 드롭다운 메뉴 테두리 제거 */
+#megaMenuLink:focus, 
+#megaMenuLink:active,
+#megaMenuLink.active,
+#megaMenuLink:hover {
+    outline: 0 !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}

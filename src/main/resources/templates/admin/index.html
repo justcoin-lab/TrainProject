@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: head">
+    <title>관리자 대시보드</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<div class="container my-5 pt-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2 class="text-primary"><i class="bi bi-speedometer2 me-2"></i>관리자 대시보드</h2>
+            <p class="text-muted">기차여행 웹사이트 관리 시스템에 오신 것을 환영합니다.</p>
+        </div>
+        <div class="col-auto">
+            <a th:href="@{/}" class="btn btn-outline-secondary">
+                <i class="bi bi-house"></i> 메인으로
+            </a>
+        </div>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <!-- 기차여행 관리 카드 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-card border-0">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-primary-light mb-4">
+                        <i class="bi bi-train-front text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="card-title">기차여행 관리</h4>
+                    <p class="card-text text-muted">국가별, 지역별 기차여행 정보를 등록, 수정, 삭제할 수 있습니다.</p>
+                    <div class="mt-auto pt-3">
+                        <a th:href="@{/admin/trains}" class="btn btn-primary w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i> 바로가기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 회원 관리 카드 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-card border-0">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-success-light mb-4">
+                        <i class="bi bi-people text-success" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="card-title">회원 관리</h4>
+                    <p class="card-text text-muted">회원 정보 조회, 권한 변경, 회원 삭제 등의 기능을 제공합니다.</p>
+                    <div class="mt-auto pt-3">
+                        <a th:href="@{/admin/users}" class="btn btn-success w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i> 바로가기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 커뮤니티 관리 카드 (준비 중) -->
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-card border-0 bg-light">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-secondary-light mb-4">
+                        <i class="bi bi-chat-left-text text-secondary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h4 class="card-title">커뮤니티 관리</h4>
+                    <p class="card-text text-muted">게시글 및 댓글 관리, 신고 처리 기능을 제공합니다. (준비 중)</p>
+                    <div class="mt-auto pt-3">
+                        <button class="btn btn-secondary w-100" disabled>
+                            <i class="bi bi-clock me-1"></i> 준비 중
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 관리자 안내사항 -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>관리자 안내사항</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="fw-bold"><i class="bi bi-check-circle me-2 text-success"></i>사용 가능한 기능</h6>
+                    <ul class="list-unstyled ps-4">
+                        <li><i class="bi bi-dot me-2"></i>기차여행 등록, 수정, 삭제 기능</li>
+                        <li><i class="bi bi-dot me-2"></i>회원 조회, 권한 변경, 계정 삭제 기능</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="fw-bold"><i class="bi bi-exclamation-triangle me-2 text-warning"></i>주의사항</h6>
+                    <ul class="list-unstyled ps-4">
+                        <li><i class="bi bi-dot me-2"></i>기차여행 등록 시 정확한 정보를 입력해주세요.</li>
+                        <li><i class="bi bi-dot me-2"></i>회원 삭제는 신중하게 처리해주세요.</li>
+                        <li><i class="bi bi-dot me-2"></i>문제가 발생할 경우 시스템 관리자에게 문의하세요.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 바로가기 버튼 그룹 -->
+    <div class="d-flex justify-content-center gap-3">
+        <a th:href="@{/admin/trains/new}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle me-1"></i> 새 기차여행 등록
+        </a>
+        <a th:href="@{/}" class="btn btn-outline-dark">
+            <i class="bi bi-display me-1"></i> 웹사이트 보기
+        </a>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<th:block th:replace="fragments/footer :: scripts"></th:block>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .bg-primary-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+    
+    .bg-secondary-light {
+        background-color: rgba(108, 117, 125, 0.1);
+    }
+</style>
+</body>
+</html>

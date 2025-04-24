@@ -10,8 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -19,14 +17,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Board {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String title;
 
     @Column(nullable = false)
     private String content;
@@ -34,11 +29,9 @@ public class Board {
     @Column(nullable = false)
     private String writer;
 
-    //게시글 내용 업데이트 메서드
-    public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
 
     @CreatedDate
     @Column(nullable = false)
@@ -47,7 +40,8 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
-
+    // 댓글 내용 업데이트 메서드
+    public void update(String content) {
+        this.content = content;
+    }
 }

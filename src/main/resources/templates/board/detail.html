@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"><title></title></head>
+
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container mt-5 pt-5">
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 th:text="${board.title}"></h3>
+            <span th:text="|작성자: ${board.writer}|"></span>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <small class="text-muted">
+                    <span th:text="|작성일 : ${#temporals.format(board.createdDate, 'yyyy/MM/dd HH:mm')}|"></span>
+                    <span th:if="${board.modifiedDate != null}"
+                          th:text="|수정일: ${#temporals.format(board.modifiedDate, 'yyyy/MM/dd HH:mm')}|"></span>
+                </small>
+            </div>
+            
+            <div class="content-area mb-4">
+                <p th:text="${board.content}" style="white-space: pre-line;"></p>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a th:href="@{/board/list}" class="btn btn-secondary">목록</a>
+                <div>
+                    <a th:href="@{/board/edit/{id}(id=${board.id})}" class="btn btn-primary me-2">수정</a>
+                    <a th:href="@{/board/delete/{id}(id=${board.id})}" class="btn btn-danger"
+                    onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- 댓글 섹션 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>댓글 <span class="badge bg-secondary" th:text="${commentCount}"></span></h5>
+        </div>
+        
+        <!-- 댓글 목록 -->
+        <div class="card-body">
+            <div th:if="${comments.isEmpty()}" class="text-center p-3">
+                <p class="text-muted">첫 댓글을 남겨보세요!</p>
+            </div>
+            
+            <div th:each="comment : ${comments}" class="border-bottom pb-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong th:text="${comment.writer}"></strong>
+                        <small class="text-muted ms-2" th:text="${#temporals.format(comment.createdDate, 'yyyy/MM/dd HH:mm')}"></small>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary comment-edit-btn"
+                                th:attr="data-id=${comment.id},data-content=${comment.content}">
+                            수정
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger ms-1 comment-delete-btn" 
+                                th:attr="data-id=${comment.id}">
+                            삭제
+                        </button>
+                    </div>
+                </div>
+                <p class="mt-2" th:id="'comment-content-' + ${comment.id}" th:text="${comment.content}"></p>
+                <div th:id="'comment-edit-form-' + ${comment.id}" class="d-none">
+                    <textarea class="form-control mb-2" rows="3" th:text="${comment.content}"></textarea>
+                    <div class="text-end">
+                        <button class="btn btn-sm btn-secondary comment-edit-cancel-btn"
+                                th:attr="data-id=${comment.id}">
+                            취소
+                        </button>
+                        <button class="btn btn-sm btn-primary ms-1 comment-edit-save-btn"
+                                th:attr="data-id=${comment.id}">
+                            저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 댓글 작성 폼 -->
+        <div class="card-footer">
+            <form id="commentForm">
+                <input type="hidden" id="boardId" th:value="${board.id}">
+                <div class="mb-3">
+                    <label for="commentWriter" class="form-label">작성자</label>
+                    <input type="text" class="form-control" id="commentWriter" required>
+                </div>
+                <div class="mb-3">
+                    <label for="commentContent" class="form-label">내용</label>
+                    <textarea class="form-control" id="commentContent" rows="3" required></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">댓글 작성</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- 스크립트 삽입 -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+
+<!-- 댓글 관련 스크립트 -->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // 댓글 폼 서밋 이벤트
+        const commentForm = document.getElementById('commentForm');
+        if (commentForm) {
+            commentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const boardId = parseInt(document.getElementById('boardId').value, 10);
+                const writer = document.getElementById('commentWriter').value;
+                const content = document.getElementById('commentContent').value;
+                
+                if (!writer.trim() || !content.trim()) {
+                    alert('작성자와 내용을 모두 입력해주세요.');
+                    return;
+                }
+                
+                fetch('/api/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        boardId: boardId,
+                        writer: writer,
+                        content: content
+                    })
+                })
+                .then(async response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error('댓글 작성 실패: ' + errorText);
+                })
+                .then(data => {
+                    // 성공 시 페이지 새로고침
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 작성 중 오류가 발생했습니다.');
+                });
+            });
+        }
+        
+        // 댓글 삭제 버튼 이벤트
+        const deleteButtons = document.querySelectorAll('.comment-delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-id');
+                
+                if (confirm('정말 이 댓글을 삭제하시겠습니까?')) {
+                    fetch(`/api/comments/${commentId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            throw new Error('댓글 삭제 실패');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('댓글 삭제 중 오류가 발생했습니다.');
+                    });
+                }
+            });
+        });
+        
+        // 댓글 수정 버튼 이벤트
+        const editButtons = document.querySelectorAll('.comment-edit-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-id');
+                const contentElement = document.getElementById(`comment-content-${commentId}`);
+                const editFormElement = document.getElementById(`comment-edit-form-${commentId}`);
+                
+                // 현재 댓글 숨기고 수정 폼 보이기
+                contentElement.classList.add('d-none');
+                editFormElement.classList.remove('d-none');
+            });
+        });
+        
+        // 수정 취소 버튼 이벤트
+        const cancelButtons = document.querySelectorAll('.comment-edit-cancel-btn');
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-id');
+                const contentElement = document.getElementById(`comment-content-${commentId}`);
+                const editFormElement = document.getElementById(`comment-edit-form-${commentId}`);
+                
+                // 수정 폼 숨기고 댓글 다시 보이기
+                editFormElement.classList.add('d-none');
+                contentElement.classList.remove('d-none');
+            });
+        });
+        
+        // 수정 저장 버튼 이벤트
+        const saveButtons = document.querySelectorAll('.comment-edit-save-btn');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-id');
+                const editFormElement = document.getElementById(`comment-edit-form-${commentId}`);
+                const content = editFormElement.querySelector('textarea').value;
+                
+                if (!content.trim()) {
+                    alert('내용을 입력해주세요.');
+                    return;
+                }
+                
+                fetch(`/api/comments/${commentId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: content
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        throw new Error('댓글 수정 실패');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 수정 중 오류가 발생했습니다.');
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

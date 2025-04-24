@@ -398,6 +398,10 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.footer-links {
+    margin-bottom: 2rem;
+}
+
 .footer-links h5 {
     color: white;
     font-weight: 600;

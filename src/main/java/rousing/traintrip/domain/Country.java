@@ -22,6 +22,7 @@ public class Country extends BaseEntity {
 
     @Builder
     public Country(String name) {
+
         this.name = name;
     }
 }

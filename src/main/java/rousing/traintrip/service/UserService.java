@@ -68,4 +68,32 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
     }
+    
+    // 모든 사용자 목록을 조회합니다.
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    // ID로 사용자를 조회합니다.
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: ID=" + id));
+    }
+    
+    // 사용자 역할을 업데이트합니다.
+    @Transactional
+    public void updateUserRole(Long id, User.Role role) {
+        User user = getUserById(id);
+        user.updateRole(role);
+        userRepository.save(user);
+    }
+    
+    // 사용자를 삭제합니다.
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다: ID=" + id);
+        }
+        userRepository.deleteById(id);
+    }
 }

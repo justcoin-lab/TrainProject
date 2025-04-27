@@ -87,16 +87,27 @@
                         <small class="form-text text-muted">예: 성인 30,000원 / 어린이 15,000원</small>
                     </div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="bookingUrl" class="form-label">예약 URL</label>
-                    <input type="text" class="form-control" id="bookingUrl" th:field="*{bookingUrl}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('bookingUrl')}" th:errors="*{bookingUrl}">
-                        예약 URL을 넣어주세요.
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="bookingUrl" class="form-label">예약 URL</label>
+                        <input type="text" class="form-control" id="bookingUrl" th:field="*{bookingUrl}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('bookingUrl')}" th:errors="*{bookingUrl}">
+                            예약 URL을 넣어주세요.
+                        </div>
+                        <small class="form-text text-muted">기차여행을 예약할 수 있는 링크를 넣어주시면 됩니다.</small>
                     </div>
-                    <small class="form-text text-muted">기차여행을 예약할 수 있는 링크를 넣어주시면 됩니다.</small>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="siteUrl" class="form-label">사이트 URL</label>
+                        <input type="text" class="form-control" id="siteUrl" th:field="*{siteUrl}" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('siteUrl')}" th:errors="*{siteUrl}">
+                            사이트 URL을 넣어주세요.
+                        </div>
+                        <small class="form-text text-muted">기차여행의 메인사이트 URL을 넣어주시면 됩니다.</small>
+                    </div>
                 </div>
-                
+
                 <div class="d-flex justify-content-between mt-4">
                     <a th:href="@{/admin/trains}" class="btn btn-secondary">취소</a>
                     <button type="submit" class="btn btn-primary">저장</button>
@@ -110,7 +121,7 @@
                     <h5 class="mb-0">입력 도움말</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>이미지 URL</strong>: 웹에서 접근 가능한 이미지</p>
+                    <p><strong>이미지 URL</strong>: 기차여행 대표 이미지</p>
                     <p><strong>노선도</strong>: 기차 노선을 보여주는 이미지</p>
                     <p><strong>운행일</strong>: 기차의 운행 스케줄을 간략하게 입력</p>
                     <p><strong>요금</strong>: 기본 요금을 입력하세요.</p>

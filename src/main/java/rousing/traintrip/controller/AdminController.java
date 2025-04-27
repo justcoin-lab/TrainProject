@@ -88,6 +88,7 @@ public class AdminController {
                 train.getFare(),
                 train.getRouteImageUrl(),
                 train.getBookingUrl(),
+                train.getSiteUrl(),
                 train.getRegionId()
         );
 

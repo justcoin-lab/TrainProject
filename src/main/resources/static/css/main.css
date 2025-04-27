@@ -335,7 +335,7 @@ body {
     background-color: var(--primary);
     border: none;
     padding: 10px 22px;
-    border-radius: 50px;
+    border-radius: 30px;
     font-weight: 500;
     transition: all 0.3s ease;
     color: white;
@@ -438,8 +438,6 @@ body {
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
-    border-radius: 50px;
-    padding: 8px 20px;
     transition: all 0.3s ease;
 }
 
@@ -453,8 +451,6 @@ body {
 .btn-outline-primary {
     border-color: var(--primary);
     color: var(--primary);
-    border-radius: 50px;
-    padding: 8px 20px;
     transition: all 0.3s ease;
 }
 

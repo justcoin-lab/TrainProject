@@ -6,73 +6,104 @@
 <head th:replace="fragments/header :: head">
 </head>
 
+<body>
 <!-- 네비게이션 -->
 <header th:replace="fragments/header :: header">
 </header>
 
-<body>
-
 <!-- 기차여행 상세 정보 -->
-<div class="container py-5">
-    <div class="row">
+<div class="container my-5 pt-5">
+    <!-- 기차여행 제목 섹션 -->
+    <div class="row mb-4 mt-5">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">홈</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${train.name}">기차여행 이름</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold mb-3" th:text="${train.name}">기차여행 이름</h1>
+            <!-- 지역 정보 -->
+            <div class="mb-4">
+                <span class="badge bg-primary rounded-pill px-3 py-2 text-white">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    <span th:text="${train.regionName}">지역 이름</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
         <!-- 기차 이미지 -->
-        <div class="col-md-6 mb-4">
-            <img th:src="${train.imageUrl}" class="img-fluid rounded" alt="기차 이미지">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+                <img th:src="${train.imageUrl}" class="img-fluid" alt="기차 이미지" style="object-fit: cover; height: 400px; width: 100%;">
+            </div>
         </div>
 
         <!-- 기차 정보 -->
-        <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1 th:text="${train.name}">기차 이름</h1>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-end mb-4">
+                        <!-- 북마크 버튼 (로그인 상태에서만 표시) -->
+                        <button sec:authorize="isAuthenticated()"
+                                th:class="${train.bookmarked} ? 'btn btn-danger' : 'btn btn-outline-danger'"
+                                onclick="toggleBookmark()"
+                                id="bookmarkBtn">
+                            <i class="bi bi-bookmark-heart-fill me-1"></i>
+                            <span th:text="${train.bookmarked} ? '북마크 해제' : '북마크'">북마크</span>
+                        </button>
+                    </div>
 
-                <!-- 북마크 버튼 (로그인 상태에서만 표시) -->
-                <button sec:authorize="isAuthenticated()"
-                        th:class="${train.bookmarked} ? 'btn btn-danger' : 'btn btn-outline-danger'"
-                        onclick="toggleBookmark()"
-                        id="bookmarkBtn">
-                    <i class="bi bi-bookmark-heart-fill"></i>
-                    <span th:text="${train.bookmarked} ? '북마크 해제' : '북마크'">북마크</span>
-                </button>
-            </div>
+                    <!-- 기차 설명 -->
+                    <h5 class="card-title">기차 소개</h5>
+                    <p class="card-text mb-4" th:text="${train.description}">기차 상세 설명</p>
 
-            <!-- 지역 정보 -->
-            <div class="badge bg-info mb-3" th:text="${train.regionName}">지역 이름</div>
-
-            <!-- 기차 설명 -->
-            <p class="mb-4" th:text="${train.description}">기차 설명</p>
-
-            <!-- 운행 정보 -->
-            <div class="card mb-3">
-                <div class="card-header">운행 정보</div>
-                <div class="card-body">
-                    <div class="row mb-2">
-                        <div class="col-4 fw-bold">운행일</div>
+                    <!-- 운행 정보 -->
+                    <h5 class="card-title">운행 정보</h5>
+                    <div class="row mb-3">
+                        <div class="col-4 fw-bold">
+                            <i class="bi bi-calendar-check me-2 text-primary"></i>운행일
+                        </div>
                         <div class="col-8" th:text="${train.operatingDays}">운행일</div>
                     </div>
-                    <div class="row">
-                        <div class="col-4 fw-bold">요금</div>
+                    <div class="row mb-4">
+                        <div class="col-4 fw-bold">
+                            <i class="bi bi-cash-coin me-2 text-primary"></i>요금
+                        </div>
                         <div class="col-8" th:text="${train.fare}">요금</div>
+                    </div>
+
+                    <!-- 버튼 그룹 -->
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <a th:href="${train.bookingUrl}" target="_blank" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-ticket-perforated me-2"></i>예약하기
+                        </a>
+                        <a th:href="${train.siteUrl}" target="_blank" class="btn btn-outline-info btn-lg px-4">
+                            <i class="bi bi-info-circle me-2"></i>자세히
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <!-- 예약 버튼 -->
-            <a th:href="${train.bookingUrl}" target="_blank" class="btn btn-primary btn-lg w-100">
-                예약하기
-            </a>
         </div>
     </div>
 
     <!-- 노선 정보 -->
-    <div class="mt-5">
-        <h3>노선 정보</h3>
-        <div class="text-center my-4">
-            <img th:src="${train.routeImageUrl}" class="img-fluid rounded" alt="노선 이미지">
+    <div class="card border-0 shadow-sm my-5">
+        <div class="card-header bg-light py-3">
+            <h3 class="mb-0"><i class="bi bi-map me-2 text-primary"></i>노선 정보</h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="text-center my-4">
+                <img th:src="${train.routeImageUrl}" class="img-fluid rounded" alt="노선 이미지" style="max-width: 100%;">
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 푸터는 메인 페이지와 동일하므로 생략 -->
+<footer th:replace="fragments/footer :: footer"></footer>
+<th:block th:replace="fragments/footer :: scripts"></th:block>
 
 <!-- 스크립트 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

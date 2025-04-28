@@ -15,7 +15,7 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username; // 이메일(아이디를 이메일로 받을 예정)
+    private String username; // 아이디
 
     @Column(nullable = false)
     private String password; // 비밀번호
@@ -44,6 +44,14 @@ public class User extends BaseEntity {
     
     public void updateRole(Role role) {
         this.role = role;
+    }
+    
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+    
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
     public enum Role {

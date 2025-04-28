@@ -96,4 +96,27 @@ public class UserService implements UserDetailsService {
         }
         userRepository.deleteById(id);
     }
+    
+    // 닉네임을 변경합니다.
+    @Transactional
+    public void updateNickname(Long userId, String newNickname) {
+        User user = getUserById(userId);
+        user.updateNickname(newNickname);
+        userRepository.save(user);
+    }
+    
+    // 비밀번호를 변경합니다.
+    @Transactional
+    public void updatePassword(Long userId, String currentPassword, String newPassword) {
+        User user = getUserById(userId);
+        
+        // 현재 비밀번호 확인
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        
+        // 새 비밀번호 암호화 후 저장
+        user.updatePassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

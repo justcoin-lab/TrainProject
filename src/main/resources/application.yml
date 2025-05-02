@@ -21,10 +21,27 @@ spring:
     encoding: UTF-8
     mode: HTML
 
+    #파일 업로드 설정
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+#이미지 업로드 경로 설정
+file:
+  # 이미지 저장 경로
+  upload-dir: src/main/resources/static/uploads/images
+  # 웹 접근 경로 (추가 - 오류 해결을 위해)
+  upload-path: /uploads/images
+
   mvc:
     static-path-pattern: /**
-  resources:
-    static-locations: classpath:/static/
+  web:
+    resources:
+      static-locations: classpath:/static/
+      cache:
+        period: 3600
 
   security:
     user:

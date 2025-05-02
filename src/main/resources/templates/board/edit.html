@@ -2,6 +2,47 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head}"><title></title></head>
 
+<style>
+  .image-preview {
+    max-width: 300px;
+    max-height: 300px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  #contentDiv {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 10px;
+    min-height: 300px;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  #contentDiv img {
+    max-width: 100%;
+    height: auto;
+  }
+  .image-toolbar {
+    display: none;
+    margin: 10px 0;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  .image-selected {
+    border: 3px solid #007bff !important;
+  }
+  .bi-spin {
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
 
@@ -23,9 +64,44 @@
       <input type="text" class="form-control" id="writer" th:value="${writer}" readonly>
     </div>
 
-    <div class="form-group mb-3">
-      <label for="content" class="form-label">내용</label>
-      <textarea class="form-control" id="content" th:field="*{content}" rows="10"></textarea>
+    <div class="mb-3">
+      <label for="contentDiv" class="form-label">내용</label>
+      <div class="mb-2">
+        <div class="d-flex">
+          <button type="button" class="btn btn-outline-primary" id="imageUploadBtn">
+            <i class="bi bi-image"></i> 이미지 업로드
+          </button>
+          <span id="uploadStatus" class="ms-2 my-auto text-primary" style="display:none">
+                        <i class="bi bi-arrow-repeat bi-spin"></i> 업로드 중...
+                    </span>
+        </div>
+        <input type="file" class="form-control d-none" id="imageInput" accept="image/*">
+      </div>
+      <div id="contentDiv" class="form-control" contenteditable="true" th:utext="*{content}"></div>
+      <!-- 이미지 툴바 -->
+      <div id="imageToolbar" class="image-toolbar">
+        <div class="btn-group me-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgSize100">크게 (100%)</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgSize75">75%</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgSize50">중간 (50%)</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgSize25">작게 (25%)</button>
+        </div>
+        <div class="btn-group me-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgAlignLeft">
+            <i class="bi bi-align-start"></i> 왼쪽
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgAlignCenter">
+            <i class="bi bi-align-center"></i> 가운데
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="imgAlignRight">
+            <i class="bi bi-align-end"></i> 오른쪽
+          </button>
+        </div>
+        <button type="button" class="btn btn-sm btn-danger" id="imgDelete">
+          <i class="bi bi-trash"></i> 이미지 삭제
+        </button>
+      </div>
+      <textarea class="form-control d-none" id="content" name="content" th:field="*{content}" rows="10"></textarea>
       <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
     </div>
 
@@ -46,6 +122,174 @@
 
 <!-- 스크립트 삽입 -->
 <th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+
+
+
+<script>
+  $(document).ready(function() {
+    // 이미지 업로드 버튼 클릭 시 파일 선택 대화상자 표시
+    $('#imageUploadBtn').on('click', function() {
+      $('#imageInput').click();
+    });
+
+    // 이미지 업로드 처리
+    $('#imageInput').on('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      // 파일 형식 체크
+      if (!file.type.match('image.*')) {
+        alert('이미지 파일만 업로드 가능합니다.');
+        this.value = '';
+        return;
+      }
+
+      // FormData 객체 생성
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // 업로드 진행 상태 표시
+      $('#uploadStatus').show();
+
+      // AJAX로 서버에 업로드
+      $.ajax({
+        url: '/api/files/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+          // 업로드 상태 표시 숨기기
+          $('#uploadStatus').hide();
+
+          if (data.success) {
+            // 이미지 삽입
+            const imgElement = $('<img>')
+                    .attr('src', data.url)
+                    .attr('alt', data.originalFileName || '업로드 이미지')
+                    .attr('title', data.originalFileName || '업로드 이미지')
+                    .attr('data-original-filename', data.originalFileName || '')
+                    .addClass('img-fluid');
+
+            $('#contentDiv').append(imgElement);
+            $('#contentDiv').append('<p></p>'); // 이미지 뒤에 단락 추가
+
+            // 커서 이미지 뒤로 이동
+            const range = document.createRange();
+            const sel = window.getSelection();
+            const lastElement = $('#contentDiv').children().last();
+            range.setStart(lastElement[0], 0);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+            // 삽입된 이미지에 클릭 이벤트 추가
+            imgElement.on('click', function(e) {
+              selectImage(this);
+              e.stopPropagation();
+            });
+          } else {
+            alert('이미지 업로드 실패: ' + (data.message || '알 수 없는 오류'));
+          }
+        },
+        error: function(xhr, status, error) {
+          $('#uploadStatus').hide();
+          alert('이미지 업로드 실패: ' + error);
+          $('#imageInput').val(''); // 파일 입력 초기화
+        }
+      });
+    });
+
+    // 이미지 선택 함수
+    function selectImage(imgElement) {
+      // 이전 선택 해제
+      $('#contentDiv img').removeClass('image-selected');
+
+      // 현재 이미지 선택 표시
+      $(imgElement).addClass('image-selected');
+
+      // 이미지 툴바 표시
+      $('#imageToolbar').show();
+    }
+
+    // 이미지 크기 조절
+    $('#imgSize100').on('click', function() {
+      $('.image-selected').css('width', '100%');
+    });
+
+    $('#imgSize75').on('click', function() {
+      $('.image-selected').css('width', '75%');
+    });
+
+    $('#imgSize50').on('click', function() {
+      $('.image-selected').css('width', '50%');
+    });
+
+    $('#imgSize25').on('click', function() {
+      $('.image-selected').css('width', '25%');
+    });
+
+    // 이미지 정렬
+    $('#imgAlignLeft').on('click', function() {
+      $('.image-selected').css({
+        'display': 'block',
+        'margin-left': '0',
+        'margin-right': 'auto'
+      });
+    });
+
+    $('#imgAlignCenter').on('click', function() {
+      $('.image-selected').css({
+        'display': 'block',
+        'margin-left': 'auto',
+        'margin-right': 'auto'
+      });
+    });
+
+    $('#imgAlignRight').on('click', function() {
+      $('.image-selected').css({
+        'display': 'block',
+        'margin-left': 'auto',
+        'margin-right': '0'
+      });
+    });
+
+    // 이미지 삭제
+    $('#imgDelete').on('click', function() {
+      if(confirm('이미지를 삭제하시겠습니까?')) {
+        $('.image-selected').remove();
+        $('#imageToolbar').hide();
+      }
+    });
+
+    // 폼 제출 처리
+    $("form").on('submit', function(e) {
+      // contentDiv의 내용을 textarea에 저장
+      const content = $('#contentDiv').html();
+      $('#content').val(content);
+    });
+
+    // 이미지가 아닌 영역을 클릭하면 이미지 선택 해제
+    $(document).on('click', function(e) {
+      if (!$(e.target).is('img') && !$(e.target).closest('#imageToolbar').length) {
+        $('#contentDiv img').removeClass('image-selected');
+        $('#imageToolbar').hide();
+      }
+    });
+
+    // 처음 로드할 때 툴바 숨기기
+    $('#imageToolbar').hide();
+
+    // 본문에 이미 이미지가 있는 경우 이미지 클릭 이벤트 추가
+    $('#contentDiv').on('click', 'img', function(e) {
+      selectImage(this);
+      e.stopPropagation();
+    });
+  });
+</script>
+
+
+
 </body>
 
 </html>

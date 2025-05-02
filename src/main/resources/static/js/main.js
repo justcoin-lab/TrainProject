@@ -11,19 +11,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 이미지 로딩 오류 처리
     setupImageErrorHandling();
-    
+
     // 페이드 애니메이션
     setupFadeAnimations();
-    
+
     // 탭 스크립트 초기화
     setupTabScripts();
-    
+
     // 스크롤 이벤트 설정
     setupScrollEvents();
-    
+
     // 호버 드롭다운 설정
     setupHoverDropdown();
-    
+
     // 스무스 스크롤 설정
     setupSmoothScroll();
 });
@@ -34,14 +34,14 @@ function setupImageErrorHandling() {
     if (!logoImg) return;
 
     console.log('로고 이미지 경로:', logoImg.src);
-    
+
     // 이미지 현재 상태 체크
     if (logoImg.complete) {
         if (!logoImg.naturalWidth) {
             handleImageError(logoImg);
         }
     }
-    
+
     // 이미지 오류 이벤트 핸들러
     logoImg.onerror = function() {
         handleImageError(this);
@@ -114,7 +114,7 @@ function setupScrollEvents() {
     window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
         if (!navbar) return;
-        
+
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
@@ -127,7 +127,7 @@ function setupScrollEvents() {
 function setupTabScripts() {
     const tabs = document.querySelectorAll('.country-tab');
     if (tabs.length === 0) return;
-    
+
     const koreaList = document.getElementById('korea-region-list');
     const japanList = document.getElementById('japan-region-list');
     const navbarToggler = document.querySelector('.navbar-toggler');
@@ -158,7 +158,7 @@ function setupTabScripts() {
             japanList.classList.remove('d-none');
             koreaList.classList.add('d-none');
         }
-        
+
         // 탭 클릭 시 드롭다운 메뉴가 닫히지 않도록 이벤트 중지
         if (!initialLoad && evt) {
             evt.stopPropagation();
@@ -178,7 +178,7 @@ function setupTabScripts() {
     if (defaultTab) {
         handleTabClick(defaultTab, true);
     }
-    
+
     // 지역 아이템 클릭 시 처리
     const regionItems = document.querySelectorAll('.region-item a');
     regionItems.forEach(item => {
@@ -186,19 +186,19 @@ function setupTabScripts() {
             // 타겟 ID 가져오기
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
-            
+
             if (targetElement) {
                 e.preventDefault();
-                
+
                 // 드롭다운 메뉴 닫기
                 const dropdownToggle = document.querySelector('#megaMenuLink');
                 if (dropdownToggle && dropdownToggle.classList.contains('show')) {
                     dropdownToggle.click();
                 }
-                
+
                 // 네비게이션 높이 고려하여 스크롤 위치 조정
                 const navHeight = document.querySelector('.navbar').offsetHeight;
-                
+
                 // 약간의 지연을 두고 스크롤 (메뉴 닫힌 후)
                 setTimeout(() => {
                     window.scrollTo({
@@ -224,7 +224,7 @@ function setupSmoothScroll() {
             handleNavLinkClick(targetId);
         });
     });
-    
+
     // Tips 메뉴 클릭 이벤트 추가 연결
     const tipsLink = document.querySelector('a[href="#travel-tips"]');
     if (tipsLink) {
@@ -239,7 +239,7 @@ function setupSmoothScroll() {
 function handleNavLinkClick(targetId) {
     const targetElement = document.querySelector(targetId);
     if (!targetElement) return;
-    
+
     // 메뉴 닫기 - 모바일에서
     if (window.innerWidth < 992) {
         const navbarCollapse = document.querySelector('.navbar-collapse');
@@ -247,10 +247,10 @@ function handleNavLinkClick(targetId) {
             document.querySelector('.navbar-toggler').click();
         }
     }
-    
+
     // 네비게이션 높이 고려하여 스크롤 위치 조정
     const navHeight = document.querySelector('.navbar').offsetHeight;
-    
+
     // 약간의 지연을 추가하여 메뉴가 닫힌 후 스크롤
     setTimeout(() => {
         window.scrollTo({

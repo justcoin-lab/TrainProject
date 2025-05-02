@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import rousing.traintrip.domain.Country;
 import rousing.traintrip.domain.Region;
 import rousing.traintrip.domain.Train;
@@ -24,7 +25,7 @@ public class TrainTripApplication {
 		SpringApplication.run(TrainTripApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public CommandLineRunner dataLoader(
 			CountryRepository countryRepository,
 			RegionRepository regionRepository,
@@ -158,5 +159,5 @@ public class TrainTripApplication {
 
 			trainRepository.saveAll(List.of(joyful_train, shikishima, resort_shirakami));
 		};
-	}
+	}*/
 }

@@ -65,6 +65,7 @@ public class TrainService {
                 dto.getFare(),
                 dto.getRouteImageUrl(),
                 dto.getBookingUrl(),
+                dto.getSiteUrl(),
                 region
         );
 
@@ -90,6 +91,7 @@ public class TrainService {
                 dto.getFare(),
                 dto.getRouteImageUrl(),
                 dto.getBookingUrl(),
+                dto.getSiteUrl(),
                 region
         );
         

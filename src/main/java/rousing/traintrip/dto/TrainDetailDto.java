@@ -21,6 +21,7 @@ public class TrainDetailDto {
     private String fare;
     private String routeImageUrl;
     private String bookingUrl;
+    private String siteUrl;
     private Long regionId;
     private String regionName;
     private String countryName;
@@ -37,6 +38,7 @@ public class TrainDetailDto {
                 .fare(train.getFare())
                 .routeImageUrl(train.getRouteImageUrl())
                 .bookingUrl(train.getBookingUrl())
+                .siteUrl(train.getSiteUrl())
                 .regionId(train.getRegion().getId())
                 .regionName(train.getRegion().getName())
                 .countryName(train.getRegion().getCountry().getName())

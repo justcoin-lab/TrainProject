@@ -17,6 +17,8 @@ public class TrainSummaryDto {
     private String name; // 기차여행 이름
     private String imageUrl; // 이미지 URL
     private String regionName; // 지역 이름
+    private Long regionId; // 지역 ID
+    private String description; // 기차여행 설명
 
     /**
      * Train 엔티티로부터 DTO 변환
@@ -27,6 +29,8 @@ public class TrainSummaryDto {
                 .name(train.getName())
                 .imageUrl(train.getImageUrl())
                 .regionName(train.getRegion().getName())
+                .regionId(train.getRegion().getId())
+                .description(train.getDescription())
                 .build();
     }
 }

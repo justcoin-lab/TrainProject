@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: head">
+    <title>기차여행 관리</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<div class="container my-5 pt-5">
+    <!-- 헤더 및 버튼 영역 -->
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-primary"><i class="bi bi-train-front me-2"></i>기차여행 관리</h2>
+            <p class="text-muted">국가 및 지역별로 기차여행을 등록, 수정, 삭제할 수 있습니다.</p>
+        </div>
+        <div class="col-auto">
+            <a th:href="@{/admin}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> 대시보드로
+            </a>
+        </div>
+        <div class="col-auto">
+            <a th:href="@{/admin/trains/new}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> 새 기차여행 등록
+            </a>
+        </div>
+    </div>
+
+    <!-- 국가 및 지역 네비게이션 메뉴 -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body bg-light">
+            <h5 class="card-title mb-3"><i class="bi bi-geo-alt me-2"></i>지역 바로가기</h5>
+            <div class="d-flex flex-wrap">
+                <div th:each="country, countryStat : ${countries}" class="me-3 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" 
+                                th:id="'dropdownMenuButton-' + ${country.id}"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <span th:text="${country.name}">국가명</span>
+                        </button>
+                        <ul class="dropdown-menu" th:aria-labelledby="'dropdownMenuButton-' + ${country.id}">
+                            <li th:each="regionData : ${countriesData.get(country.name)}">
+                                <a class="dropdown-item" 
+                                   th:href="'#' + ${country.id} + '-' + ${regionData.region.id}" 
+                                   th:text="${regionData.region.name}">지역명</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 기차여행이 없을 경우 -->
+    <div class="alert alert-info" th:if="${trains.empty}">
+        <i class="bi bi-info-circle me-2"></i>
+        등록된 기차여행이 없습니다. 새로운 기차여행을 등록해주세요.
+    </div>
+
+    <!-- 국가 및 지역별 기차여행 목록 -->
+    <div th:unless="${trains.empty}">
+        <div th:each="country : ${countries}" class="mb-5">
+            <div th:if="${countriesData.get(country.name) != null && !countriesData.get(country.name).empty}">
+                <!-- 국가 헤더 -->
+                <div class="country-section mb-4">
+                    <h3 class="country-header">
+                        <i class="bi bi-flag me-2"></i>
+                        <span th:text="${country.name} + '의 기차여행'">국가명의 기차여행</span>
+                    </h3>
+                </div>
+                
+                <!-- 각 지역별 섹션 -->
+                <div th:each="regionData : ${countriesData.get(country.name)}" class="mb-5">
+                    <div class="region-section" th:id="${country.id} + '-' + ${regionData.region.id}">
+                        <!-- 지역 헤더 -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="region-header">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                <span th:text="${regionData.region.name}">지역명</span>
+                            </h4>
+                            <a th:href="@{/admin/trains/new}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-plus-circle me-1"></i>이 지역에 추가
+                            </a>
+                        </div>
+                        
+                        <!-- 기차여행 카드 그리드 -->
+                        <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!regionData.trains.empty}">
+                            <div class="col" th:each="train : ${regionData.trains}">
+                                <div class="card h-100 shadow-sm hover-card">
+                                    <div class="position-relative">
+                                        <img th:src="${train.imageUrl}" class="card-img-top" alt="기차여행 이미지" 
+                                             style="height: 180px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <span class="badge bg-primary" th:text="${regionData.region.name}">지역</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title" th:text="${train.name}">기차여행 이름</h5>
+                                        <p class="card-text small text-muted" th:if="${train.description}">
+                                            <span th:text="${#strings.abbreviate(train.description, 100)}">설명</span>
+                                        </p>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <a th:href="@{'/admin/trains/edit/' + ${train.id}}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-pencil"></i> 수정
+                                            </a>
+                                            <form th:action="@{'/admin/trains/delete/' + ${train.id}}" method="post" 
+                                                  onsubmit="return confirm('정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-trash"></i> 삭제
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 기차여행이 없는 지역 표시 -->
+                        <div class="alert alert-light border" th:if="${regionData.trains.empty}">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <span th:text="${regionData.region.name} + ' 지역에 등록된 기차여행이 없습니다.'"></span>
+                            <a th:href="@{/admin/trains/new}" class="alert-link">새 기차여행을 등록하세요.</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스타일 -->
+    <style>
+        .country-header {
+            position: relative;
+            color: #3f6ad8;
+            border-bottom: 2px solid #3f6ad8;
+            padding-bottom: 10px;
+        }
+        
+        .region-header {
+            color: #515151;
+            border-left: 4px solid #3f6ad8;
+            padding-left: 12px;
+        }
+        
+        .region-section {
+            scroll-margin-top: 100px;
+        }
+        
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* 상단 메뉴 고정 시 스크롤 오프셋 조정 */
+        html {
+            scroll-padding-top: 100px;
+        }
+    </style>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<th:block th:replace="fragments/footer :: scripts"></th:block>
+</body>
+</html>

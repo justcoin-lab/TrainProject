@@ -18,7 +18,7 @@ public class Train extends BaseEntity {
     private String name; // 기차여행 이름
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String description; // 기차 여행 설명
+    private String description; // 기차 여행 소개
 
     @Column(nullable = false)
     private String imageUrl; // 이미지 URL
@@ -35,6 +35,8 @@ public class Train extends BaseEntity {
     @Column(nullable = false)
     private String bookingUrl; // 예약 URL
 
+    private String siteUrl; // 사이트 URL
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region;
@@ -45,7 +47,7 @@ public class Train extends BaseEntity {
     @Builder
     public Train(String name, String description, String imageUrl,
                  String operatingDays, String fare, String routeImageUrl,
-                 String bookingUrl, Region region) {
+                 String bookingUrl, String siteUrl, Region region) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -53,13 +55,14 @@ public class Train extends BaseEntity {
         this.fare = fare;
         this.routeImageUrl = routeImageUrl;
         this.bookingUrl = bookingUrl;
+        this.siteUrl = siteUrl;
         this.region = region;
     }
     
     // 기차 정보 업데이트 메서드
     public void update(String name, String description, String imageUrl,
                       String operatingDays, String fare, String routeImageUrl,
-                      String bookingUrl, Region region) {
+                      String bookingUrl, String siteUrl, Region region) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -67,6 +70,7 @@ public class Train extends BaseEntity {
         this.fare = fare;
         this.routeImageUrl = routeImageUrl;
         this.bookingUrl = bookingUrl;
+        this.siteUrl = siteUrl;
         this.region = region;
     }
 }

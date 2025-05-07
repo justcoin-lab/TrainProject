@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -40,6 +39,7 @@ public class BoardService {
     }
 
     //게시글 상세 조회
+    @Transactional(readOnly = true)
     public BoardDTO findById(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException

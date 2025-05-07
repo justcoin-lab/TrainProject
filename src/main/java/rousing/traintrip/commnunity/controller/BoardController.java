@@ -11,10 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import rousing.traintrip.commnunity.dto.BoardCreateRequest;
-import rousing.traintrip.commnunity.dto.BoardDTO;
-import rousing.traintrip.commnunity.dto.BoardUpdateRequest;
-import rousing.traintrip.commnunity.dto.CommentDTO;
+import rousing.traintrip.commnunity.dto.*;
 import rousing.traintrip.commnunity.service.BoardService;
 import rousing.traintrip.commnunity.service.CommentService;
 
@@ -107,12 +104,14 @@ public class BoardController {
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
         BoardDTO boardDTO = boardService.findById(id);
-        List<CommentDTO> comments = commentService.findByBoardId(id);
-        
+        // 계층 구조로 댓글 조회
+        CommentListResponse commentResponse = commentService.findCommentsByBoardId(id);
+
         model.addAttribute("board", boardDTO);
-        model.addAttribute("comments", comments);
-        model.addAttribute("commentCount", comments.size());
-        
+        model.addAttribute("comments", commentResponse.getComments());
+        model.addAttribute("commentCount", commentResponse.getTotalCount());
+
+
         return "board/detail";
     }
 

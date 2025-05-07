@@ -9,6 +9,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+    @Index(name = "idx_train_region_id", columnList = "region_id"),
+    @Index(name = "idx_train_name", columnList = "name")
+})
 public class Train extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

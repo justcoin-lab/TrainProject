@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import rousing.traintrip.service.FileService;
 import rousing.traintrip.domain.User;
 import rousing.traintrip.dto.CountryDto;
 import rousing.traintrip.dto.RegionDto;
@@ -30,7 +32,8 @@ public class AdminController {
     private final RegionService regionService;
     private final CountryService countryService;
     private final UserService userService;
-    
+    private final FileService fileService;
+
     // 관리자 대시보드
     @GetMapping
     public String adminDashboard() {
@@ -42,7 +45,7 @@ public class AdminController {
     public String listTrains(Model model) {
         List<TrainSummaryDto> trains = trainService.getAllTrains();
         model.addAttribute("trains", trains);
-        
+
         // 국가별, 지역별로 기차여행 데이터 구성
         List<CountryDto> countries = countryService.getAllCountries();
         model.addAttribute("countries", countries);
@@ -69,9 +72,17 @@ public class AdminController {
     }
 
     @GetMapping("/trains/new")
-    public String newTrainForm(Model model) {
-        model.addAttribute("train", new TrainUpsertDto());
+    public String newTrainForm(@RequestParam(required = false) Long regionId, Model model) {
+        TrainUpsertDto trainDto = new TrainUpsertDto();
+        
+        // 지역 ID가 제공된 경우 해당 지역을 미리 선택
+        if (regionId != null) {
+            trainDto.setRegionId(regionId);
+        }
+        
+        model.addAttribute("train", trainDto);
         model.addAttribute("countries", countryService.getAllCountries());
+        model.addAttribute("preSelectedRegionId", regionId); // 템플릿에서 사용할 선택된 지역 ID 추가
         return "admin/train-form";
     }
 
@@ -98,18 +109,52 @@ public class AdminController {
     }
 
     @PostMapping("/trains")
-    public String saveTrain(@Valid TrainUpsertDto trainDto, BindingResult result) {
+    public String saveTrain(@Valid TrainUpsertDto trainDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            // 유효성 검사 오류 발생 시 폼 다시 보이기
+            model.addAttribute("countries", countryService.getAllCountries());
             return "admin/train-form";
         }
-
-        if (trainDto.getId() == null) {
-            trainService.createTrain(trainDto);
-        } else {
-            trainService.updateTrain(trainDto);
+        
+        try {
+            // 대표 이미지 파일 업로드 처리
+            if (trainDto.getImageFile() != null && !trainDto.getImageFile().isEmpty()) {
+                // 기존 이미지가 있는 경우 삭제
+                if (trainDto.getId() != null && trainDto.getImageUrl() != null && !trainDto.getImageUrl().isEmpty()) {
+                    fileService.deleteFile(trainDto.getImageUrl());
+                }
+                
+                // 새 파일 업로드 후 URL 업데이트
+                String imageUrl = fileService.uploadFile(trainDto.getImageFile());
+                trainDto.setImageUrl(imageUrl);
+            }
+            
+            // 노선 이미지 파일 업로드 처리
+            if (trainDto.getRouteImageFile() != null && !trainDto.getRouteImageFile().isEmpty()) {
+                // 기존 이미지가 있는 경우 삭제
+                if (trainDto.getId() != null && trainDto.getRouteImageUrl() != null && !trainDto.getRouteImageUrl().isEmpty()) {
+                    fileService.deleteFile(trainDto.getRouteImageUrl());
+                }
+                
+                // 새 파일 업로드 후 URL 업데이트
+                String routeImageUrl = fileService.uploadFile(trainDto.getRouteImageFile());
+                trainDto.setRouteImageUrl(routeImageUrl);
+            }
+        
+            // 기차여행 저장 처리
+            if (trainDto.getId() == null) {
+                trainService.createTrain(trainDto);
+            } else {
+                trainService.updateTrain(trainDto);
+            }
+            
+            return "redirect:/admin/trains";
+        } catch (Exception e) {
+            // 오류 처리
+            model.addAttribute("errorMessage", "파일 업로드 오류: " + e.getMessage());
+            model.addAttribute("countries", countryService.getAllCountries());
+            return "admin/train-form";
         }
-
-        return "redirect:/admin/trains";
     }
 
     @PostMapping("/trains/delete/{id}")
@@ -117,9 +162,9 @@ public class AdminController {
         trainService.deleteTrain(id);
         return "redirect:/admin/trains";
     }
-    
+
     // ===== 회원 관리 기능 =====
-    
+
     // 모든 회원 목록 불러오기
     @GetMapping("/users")
     public String listUsers(Model model) {
@@ -127,7 +172,7 @@ public class AdminController {
         model.addAttribute("users", users);
         return "admin/users";
     }
-    
+
     // 회원 상세 정보 보기
     @GetMapping("/users/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
@@ -136,14 +181,14 @@ public class AdminController {
         model.addAttribute("roles", User.Role.values());
         return "admin/user-detail";
     }
-    
+
     // 회원 역할 업데이트
     @PostMapping("/users/{id}/role")
     public String updateUserRole(@PathVariable Long id, @RequestParam User.Role role) {
         userService.updateUserRole(id, role);
         return "redirect:/admin/users/" + id;
     }
-    
+
     // 회원 삭제
     @PostMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable Long id) {

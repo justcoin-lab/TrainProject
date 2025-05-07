@@ -20,6 +20,7 @@ spring:
     suffix: .html
     encoding: UTF-8
     mode: HTML
+    check-template-location: true
 
   mvc:
     static-path-pattern: /**
@@ -31,6 +32,13 @@ spring:
       name: admin
       password: admin  # Spring Security 기본 계정
 
+  # 파일 업로드 설정
+  servlet:
+    multipart:
+      max-file-size: 10MB  # 최대 파일 크기
+      max-request-size: 10MB  # 최대 요청 크기
+      enabled: true
+
 server:
   port: 8080
 
@@ -38,3 +46,7 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.springframework.security: debug
+
+# 파일 업로드 설정
+file:
+  upload-dir: ${user.home}/traintrip/uploads/images  # 파일 업로드 디렉토리

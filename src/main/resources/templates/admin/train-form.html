@@ -16,9 +16,12 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <form th:action="@{/admin/trains}" th:object="${train}" method="post" class="needs-validation" novalidate>
+            <form th:action="@{/admin/trains}" th:object="${train}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}" />
-                
+                <!-- 기존 이미지 URL이 있을 경우 히든 필드로 유지 -->
+                <input type="hidden" th:field="*{imageUrl}" />
+                <input type="hidden" th:field="*{routeImageUrl}" />
+
                 <div class="mb-3">
                     <label for="name" class="form-label">기차여행 이름</label>
                     <input type="text" class="form-control" id="name" th:field="*{name}" required>
@@ -26,14 +29,14 @@
                         기차여행 이름은 필수입니다.
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="regionId" class="form-label">지역</label>
                     <select class="form-select" id="regionId" th:field="*{regionId}" required>
                         <option value="">지역을 선택하세요</option>
                         <optgroup th:each="country : ${countries}" th:label="${country.name}">
-                            <option th:each="region : ${country.regions}" 
-                                    th:value="${region.id}" 
+                            <option th:each="region : ${country.regions}"
+                                    th:value="${region.id}"
                                     th:text="${region.name}">지역명</option>
                         </optgroup>
                     </select>
@@ -41,25 +44,33 @@
                         지역을 선택해주세요.
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
-                    <label for="imageUrl" class="form-label">대표 이미지 URL</label>
-                    <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}">
-                        이미지 URL은 필수입니다.
+                    <label class="form-label">대표 이미지</label>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+                            <small class="form-text text-muted">기차여행 대표 이미지를 업로드하세요.</small>
+                        </div>
+                        <div class="col-md-4" th:if="${train.imageUrl != null}">
+                            <img th:src="${train.imageUrl}" alt="대표 이미지" class="img-thumbnail" style="max-height: 100px;">
+                        </div>
                     </div>
-                    <small class="form-text text-muted">기차여행 대표 이미지의 URL을 입력하세요.</small>
                 </div>
-                
+
                 <div class="mb-3">
-                    <label for="routeImageUrl" class="form-label">노선 이미지 URL</label>
-                    <input type="text" class="form-control" id="routeImageUrl" th:field="*{routeImageUrl}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('routeImageUrl')}" th:errors="*{routeImageUrl}">
-                        노선 이미지 URL은 필수입니다.
+                    <label class="form-label">노선 이미지</label>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <input type="file" class="form-control" id="routeImageFile" name="routeImageFile" accept="image/*">
+                            <small class="form-text text-muted">기차 노선도 이미지를 업로드하세요.</small>
+                        </div>
+                        <div class="col-md-4" th:if="${train.routeImageUrl != null}">
+                            <img th:src="${train.routeImageUrl}" alt="노선 이미지" class="img-thumbnail" style="max-height: 100px;">
+                        </div>
                     </div>
-                    <small class="form-text text-muted">기차 노선도 이미지의 URL을 입력하세요.</small>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="description" class="form-label">기차여행 설명</label>
                     <textarea class="form-control" id="description" th:field="*{description}" rows="5" required></textarea>
@@ -67,7 +78,7 @@
                         기차여행 간단정보를 입력해주세요.
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="operatingDays" class="form-label">운행일</label>
@@ -77,7 +88,7 @@
                         </div>
                         <small class="form-text text-muted">예: 1~3월 운행, 매일(연중무휴), 주말운행, 월/수/금 운행</small>
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="fare" class="form-label">요금</label>
                         <input type="text" class="form-control" id="fare" th:field="*{fare}" required>
@@ -114,7 +125,7 @@
                 </div>
             </form>
         </div>
-        
+
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-light">
@@ -135,24 +146,34 @@
 <th:block th:replace="fragments/footer :: scripts"></th:block>
 
 <script>
-// 폼 유효성 검사 활성화
-(function() {
-    'use strict';
-    
-    // 모든 폼에 대한 유효성 검사 활성화
-    var forms = document.querySelectorAll('.needs-validation');
-    
-    Array.prototype.slice.call(forms).forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
+    // 폼 유효성 검사 활성화
+    (function() {
+        'use strict';
+
+        // 모든 폼에 대한 유효성 검사 활성화
+        var forms = document.querySelectorAll('.needs-validation');
+
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // URL 파라미터에서 지역 ID가 제공되었는지 확인
+        const preSelectedRegionId = [[${preSelectedRegionId}]];
+        if (preSelectedRegionId) {
+            // 지역 ID 자동 선택
+            const regionSelect = document.getElementById('regionId');
+            if (regionSelect) {
+                regionSelect.value = preSelectedRegionId;
             }
-            
-            form.classList.add('was-validated');
-        }, false);
-    });
-})();
+        }
+    })();
 </script>
 </body>
 </html>

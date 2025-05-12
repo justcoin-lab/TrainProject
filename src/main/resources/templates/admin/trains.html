@@ -33,16 +33,17 @@
             <div class="d-flex flex-wrap">
                 <div th:each="country, countryStat : ${countries}" class="me-3 mb-3">
                     <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" 
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
                                 th:id="'dropdownMenuButton-' + ${country.id}"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <span th:text="${country.name}">국가명</span>
                         </button>
                         <ul class="dropdown-menu" th:aria-labelledby="'dropdownMenuButton-' + ${country.id}">
-                            <li th:each="regionData : ${countriesData.get(country.name)}">
-                                <a class="dropdown-item" 
-                                   th:href="'#' + ${country.id} + '-' + ${regionData.region.id}" 
-                                   th:text="${regionData.region.name}">지역명</a>
+                            <li th:each="region : ${country.regions}">
+                                <a class="dropdown-item"
+                                   th:href="${'#' + country.id + '-' + region.id}"
+                                   th:text="${region.name}"
+                                   onclick="scrollToRegion(this.getAttribute('href'), event)">지역명</a>
                             </li>
                         </ul>
                     </div>
@@ -68,27 +69,27 @@
                         <span th:text="${country.name} + '의 기차여행'">국가명의 기차여행</span>
                     </h3>
                 </div>
-                
+
                 <!-- 각 지역별 섹션 -->
                 <div th:each="regionData : ${countriesData.get(country.name)}" class="mb-5">
-                    <div class="region-section" th:id="${country.id} + '-' + ${regionData.region.id}">
+                    <div class="region-section" th:id="${country.id + '-' + regionData.region.id}">
                         <!-- 지역 헤더 -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="region-header">
                                 <i class="bi bi-geo-alt me-2"></i>
                                 <span th:text="${regionData.region.name}">지역명</span>
                             </h4>
-                            <a th:href="@{/admin/trains/new}" class="btn btn-sm btn-outline-primary">
+                            <a th:href="@{/admin/trains/new(regionId=${regionData.region.id})}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-plus-circle me-1"></i>이 지역에 추가
                             </a>
                         </div>
-                        
+
                         <!-- 기차여행 카드 그리드 -->
                         <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!regionData.trains.empty}">
                             <div class="col" th:each="train : ${regionData.trains}">
                                 <div class="card h-100 shadow-sm hover-card">
                                     <div class="position-relative">
-                                        <img th:src="${train.imageUrl}" class="card-img-top" alt="기차여행 이미지" 
+                                        <img th:src="${train.imageUrl}" class="card-img-top" alt="기차여행 이미지"
                                              style="height: 180px; object-fit: cover;">
                                         <div class="position-absolute top-0 end-0 p-2">
                                             <span class="badge bg-primary" th:text="${regionData.region.name}">지역</span>
@@ -100,11 +101,11 @@
                                             <span th:text="${#strings.abbreviate(train.description, 100)}">설명</span>
                                         </p>
                                         <div class="d-flex justify-content-between mt-3">
-                                            <a th:href="@{'/admin/trains/edit/' + ${train.id}}" 
+                                            <a th:href="@{'/admin/trains/edit/' + ${train.id}}"
                                                class="btn btn-outline-primary btn-sm">
                                                 <i class="bi bi-pencil"></i> 수정
                                             </a>
-                                            <form th:action="@{'/admin/trains/delete/' + ${train.id}}" method="post" 
+                                            <form th:action="@{'/admin/trains/delete/' + ${train.id}}" method="post"
                                                   onsubmit="return confirm('정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
                                                 <button type="submit" class="btn btn-outline-danger btn-sm">
                                                     <i class="bi bi-trash"></i> 삭제
@@ -115,12 +116,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- 기차여행이 없는 지역 표시 -->
                         <div class="alert alert-light border" th:if="${regionData.trains.empty}">
                             <i class="bi bi-info-circle me-2"></i>
                             <span th:text="${regionData.region.name} + ' 지역에 등록된 기차여행이 없습니다.'"></span>
-                            <a th:href="@{/admin/trains/new}" class="alert-link">새 기차여행을 등록하세요.</a>
+                            <a th:href="@{/admin/trains/new(regionId=${regionData.region.id})}" class="alert-link">새 기차여행을 등록하세요.</a>
                         </div>
                     </div>
                 </div>
@@ -165,5 +166,30 @@
 
 <footer th:replace="fragments/footer :: footer"></footer>
 <th:block th:replace="fragments/footer :: scripts"></th:block>
+
+<script>
+    // 지역으로 스크롤하는 함수
+    function scrollToRegion(anchor, event) {
+        // 해시 부분만 추출
+        const targetId = anchor.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+            // 네비게이션 바 때문에 약간의 오프셋 추가 (px)
+            const offset = 100;
+            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+            
+            // 스크롤 애니메이션 적용
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+            
+            // 이벤트 버블링 방지 (기본 액션 방지)
+            event.preventDefault();
+        }
+    }
+</script>
 </body>
 </html>

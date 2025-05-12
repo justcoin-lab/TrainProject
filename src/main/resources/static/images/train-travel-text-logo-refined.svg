@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 70">
-    <!-- 텍스트 로고 -->
-    <defs>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&amp;display=swap');
+  <!-- 텍스트 로고 -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&amp;display=swap');
 
-            .logo-text {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            }
+      .logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      }
 
-            .train {
-            fill: #0056a4;
-            }
+      .train {
+      fill: #0056a4;
+      }
 
-            .travel {
-            fill: #e76f35;
-            }
-        </style>
+      .travel {
+      fill: #e76f35;
+      }
+    </style>
 
-        <!-- 그라데이션 정의 -->
-        <linearGradient id="trainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#0073d8"/>
-            <stop offset="100%" stop-color="#0056a4"/>
-        </linearGradient>
+    <!-- 그라데이션 정의 -->
+    <linearGradient id="trainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0073d8"/>
+      <stop offset="100%" stop-color="#0056a4"/>
+    </linearGradient>
 
-        <linearGradient id="travelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#f28350"/>
-            <stop offset="100%" stop-color="#e76f35"/>
-        </linearGradient>
-    </defs>
+    <linearGradient id="travelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f28350"/>
+      <stop offset="100%" stop-color="#e76f35"/>
+    </linearGradient>
+  </defs>
 
-    <!-- 로고 텍스트 -->
-    <text x="75" y="45" class="logo-text train" font-size="48" fill="url(#trainGradient)">TRAIN</text>
-    <text x="225" y="45" class="logo-text travel" font-size="48" fill="url(#travelGradient)">TRAVEL</text>
+  <!-- 로고 텍스트 -->
+  <text x="75" y="45" class="logo-text train" font-size="48" fill="url(#trainGradient)">TRAIN</text>
+  <text x="225" y="45" class="logo-text travel" font-size="48" fill="url(#travelGradient)">TRAVEL</text>
 
-    <!-- 기차 트랙 밑줄 - 텍스트에 맞춰 조정됨 -->
-    <g>
-        <line x1="75" y1="55" x2="380" y2="55" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-        <line x1="75" y1="60" x2="380" y2="60" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <!-- 기차 트랙 밑줄 - 텍스트에 맞춰 조정됨 -->
+  <g>
+    <line x1="75" y1="55" x2="380" y2="55" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <line x1="75" y1="60" x2="380" y2="60" stroke="#333" stroke-width="3" stroke-linecap="round"/>
 
-        <!-- 침목 - 간격 균일하게 배치 -->
-        <g stroke="#555" stroke-width="2">
-            <line x1="85" y1="53" x2="85" y2="62"/>
-            <line x1="110" y1="53" x2="110" y2="62"/>
-            <line x1="135" y1="53" x2="135" y2="62"/>
-            <line x1="160" y1="53" x2="160" y2="62"/>
-            <line x1="185" y1="53" x2="185" y2="62"/>
-            <line x1="210" y1="53" x2="210" y2="62"/>
-            <line x1="235" y1="53" x2="235" y2="62"/>
-            <line x1="260" y1="53" x2="260" y2="62"/>
-            <line x1="285" y1="53" x2="285" y2="62"/>
-            <line x1="310" y1="53" x2="310" y2="62"/>
-            <line x1="335" y1="53" x2="335" y2="62"/>
-            <line x1="360" y1="53" x2="360" y2="62"/>
-        </g>
+    <!-- 침목 - 간격 균일하게 배치 -->
+    <g stroke="#555" stroke-width="2">
+      <line x1="85" y1="53" x2="85" y2="62"/>
+      <line x1="110" y1="53" x2="110" y2="62"/>
+      <line x1="135" y1="53" x2="135" y2="62"/>
+      <line x1="160" y1="53" x2="160" y2="62"/>
+      <line x1="185" y1="53" x2="185" y2="62"/>
+      <line x1="210" y1="53" x2="210" y2="62"/>
+      <line x1="235" y1="53" x2="235" y2="62"/>
+      <line x1="260" y1="53" x2="260" y2="62"/>
+      <line x1="285" y1="53" x2="285" y2="62"/>
+      <line x1="310" y1="53" x2="310" y2="62"/>
+      <line x1="335" y1="53" x2="335" y2="62"/>
+      <line x1="360" y1="53" x2="360" y2="62"/>
     </g>
+  </g>
 </svg>

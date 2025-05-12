@@ -1,7 +1,7 @@
 package rousing.traintrip.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import rousing.traintrip.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import rousing.traintrip.domain.Bookmark;
@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
@@ -24,6 +25,7 @@ public class BookmarkService {
     private final TrainRepository trainRepository;
 
     // 특정 사용자의 모든 북마크 정보를 조회합니다.
+    @Transactional(readOnly = true)
     public List<BookmarkDto> getBookmarksByUserId(Long userId) {
         return bookmarkRepository.findByUserId(userId).stream()
                 .map(BookmarkDto::fromEntity)
@@ -35,10 +37,10 @@ public class BookmarkService {
     @Transactional
     public void toggleBookmark(Long userId, Long trainId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         Train train = trainRepository.findById(trainId)
-                .orElseThrow(() -> new EntityNotFoundException("기차여행을 찾을 수 없습니다: " + trainId));
+                .orElseThrow(() -> new ResourceNotFoundException("Train", "id", trainId));
 
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByUserIdAndTrainId(userId, trainId);
 

@@ -13,6 +13,8 @@ import rousing.traintrip.dto.PasswordChangeDto;
 import rousing.traintrip.dto.ProfileUpdateDto;
 import rousing.traintrip.service.BookmarkService;
 import rousing.traintrip.service.UserService;
+import rousing.traintrip.community.dto.BoardDTO;
+import rousing.traintrip.community.service.BoardService;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 public class MyPageController {
     private final BookmarkService bookmarkService;
     private final UserService userService;
+    private final BoardService boardService;
 
     // 마이페이지 대시보드
     @GetMapping
@@ -32,10 +35,14 @@ public class MyPageController {
         }
 
         User user = userService.getCurrentUser(principal.getName());
+        String writerName = user.getNickname() != null ? user.getNickname() : user.getUsername();
+        
         List<BookmarkDto> bookmarks = bookmarkService.getBookmarksByUserId(user.getId());
+        List<BoardDTO> myPosts = boardService.findByWriter(writerName);
         
         model.addAttribute("user", user);
         model.addAttribute("bookmarks", bookmarks);
+        model.addAttribute("myPosts", myPosts);
         return "mypage/dashboard";
     }
 
@@ -50,6 +57,22 @@ public class MyPageController {
         List<BookmarkDto> bookmarks = bookmarkService.getBookmarksByUserId(user.getId());
         model.addAttribute("bookmarks", bookmarks);
         return "mypage/bookmarks";
+    }
+    
+    // 마이페이지 내가 쓴 글 목록
+    @GetMapping("/posts")
+    public String myPosts(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+
+        User user = userService.getCurrentUser(principal.getName());
+        String writerName = user.getNickname() != null ? user.getNickname() : user.getUsername();
+        
+        List<BoardDTO> myPosts = boardService.findByWriter(writerName);
+        model.addAttribute("myPosts", myPosts);
+        model.addAttribute("user", user);
+        return "mypage/posts";
     }
     
     // 프로필 정보 페이지

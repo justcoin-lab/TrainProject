@@ -1,6 +1,7 @@
 package rousing.traintrip.dto;
 
 import lombok.Getter;
+import java.util.Map;
 
 @Getter
 public class ResponseDto<T> {
@@ -20,5 +21,9 @@ public class ResponseDto<T> {
 
     public static <T> ResponseDto<T> fail(String message) {
         return new ResponseDto<>(false, null, message);
+    }
+    
+    public static <T> ResponseDto<T> fail(String message, Map<String, String> errors) {
+        return new ResponseDto<>(false, (T) errors, message);
     }
 }

@@ -39,10 +39,10 @@
                             <span th:text="${country.name}">국가명</span>
                         </button>
                         <ul class="dropdown-menu" th:aria-labelledby="'dropdownMenuButton-' + ${country.id}">
-                            <li th:each="regionData : ${countriesData.get(country.name)}">
+                            <li th:each="region : ${country.regions}">
                                 <a class="dropdown-item"
-                                   th:href="${'#' + country.id + '-' + regionData.region.id}"
-                                   th:text="${regionData.region.name}"
+                                   th:href="${'#' + country.id + '-' + region.id}"
+                                   th:text="${region.name}"
                                    onclick="scrollToRegion(this.getAttribute('href'), event)">지역명</a>
                             </li>
                         </ul>
